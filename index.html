@@ -70,6 +70,8 @@
       font-family: inherit;
     }
 
+    /* Layout */
+
     .page {
       display: flex;
       flex-direction: column;
@@ -88,6 +90,8 @@
         padding: 0 24px;
       }
     }
+
+    /* Header */
 
     header {
       position: sticky;
@@ -348,6 +352,8 @@
         display: none !important;
       }
     }
+
+    /* Main layout */
 
     main {
       flex: 1;
@@ -617,6 +623,8 @@
       color: rgba(235, 235, 242, 0.86);
     }
 
+    /* Section headers */
+
     .section-header {
       margin-bottom: 26px;
       max-width: 640px;
@@ -647,6 +655,8 @@
       font-size: 14px;
       line-height: 1.7;
     }
+
+    /* Solutions */
 
     .solutions-grid {
       display: grid;
@@ -725,6 +735,8 @@
       box-shadow: 0 0 12px rgba(94, 92, 230, 0.8);
     }
 
+    /* Workflow */
+
     .workflow-grid {
       display: grid;
       gap: 26px;
@@ -736,6 +748,12 @@
         grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.7fr);
         gap: 40px;
       }
+    }
+
+    .workflow-notes {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
     }
 
     .workflow-list {
@@ -861,6 +879,8 @@
       color: #050505;
     }
 
+    /* Process */
+
     .process-grid {
       display: grid;
       gap: 16px;
@@ -920,6 +940,8 @@
       gap: 6px;
     }
 
+    /* Contact */
+
     .contact-grid {
       display: grid;
       gap: 28px;
@@ -941,6 +963,12 @@
       box-shadow: 0 28px 70px rgba(0, 0, 0, 0.96);
       backdrop-filter: blur(22px) saturate(160%);
       -webkit-backdrop-filter: blur(22px) saturate(160%);
+    }
+
+    @media (min-width: 768px) {
+      .contact-card {
+        padding: 24px 22px 22px;
+      }
     }
 
     .contact-intro {
@@ -1132,6 +1160,8 @@
       display: inline-flex;
     }
 
+    /* Footer */
+
     footer {
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding: 18px 0 22px;
@@ -1195,6 +1225,8 @@
       height: 14px;
     }
 
+    /* Scroll reveal */
+
     .reveal {
       opacity: 0;
       transform: translateY(12px);
@@ -1205,6 +1237,8 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Accessibility */
 
     :focus-visible {
       outline: 2px solid var(--accent);
@@ -1268,6 +1302,7 @@
     </header>
 
     <main id="top">
+      <!-- Hero -->
       <section class="hero section">
         <div class="shell hero-grid">
           <div class="reveal">
@@ -1344,6 +1379,7 @@
         </div>
       </section>
 
+      <!-- Automation Solutions -->
       <section id="solutions" class="section">
         <div class="shell">
           <header class="section-header reveal">
@@ -1395,6 +1431,7 @@
         </div>
       </section>
 
+      <!-- Software Solutions -->
       <section id="software" class="section">
         <div class="shell">
           <header class="section-header reveal">
@@ -1446,6 +1483,7 @@
         </div>
       </section>
 
+      <!-- Workflow -->
       <section id="workflow" class="section">
         <div class="shell workflow-grid">
           <div class="reveal">
@@ -1458,24 +1496,30 @@
               </p>
             </header>
 
-            <ul class="workflow-list">
-              <li>
-                <span>1</span>
-                New messages arrive from Intercom, Zendesk, or email and are normalized into a single format.
-              </li>
-              <li>
-                <span>2</span>
-                An LLM classifies intent, priority, and sentiment, then drafts a reply in your brand voice.
-              </li>
-              <li>
-                <span>3</span>
-                Guardrails check PII, hallucination risks, and edge-cases before surfacing to an agent inbox.
-              </li>
-              <li>
-                <span>4</span>
-                Agents approve, edit, or escalate &mdash; outcomes are logged to improve prompts over time.
-              </li>
-            </ul>
+            <div class="workflow-notes">
+              <div class="contact-pill" style="margin-bottom: 12px;">
+                <span class="contact-dot"></span>
+                Flow overview
+              </div>
+              <ul class="workflow-list">
+                <li>
+                  <span>1</span>
+                  New messages arrive from Intercom, Zendesk, or email and are normalized into a single format.
+                </li>
+                <li>
+                  <span>2</span>
+                  An LLM classifies intent, priority, and sentiment, then drafts a reply in your brand voice.
+                </li>
+                <li>
+                  <span>3</span>
+                  Guardrails check PII, hallucination risks, and edge-cases before surfacing to an agent inbox.
+                </li>
+                <li>
+                  <span>4</span>
+                  Agents approve, edit, or escalate &mdash; outcomes are logged to improve prompts over time.
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="workflow-window reveal" aria-label="Example n8n workflow for AI-augmented support">
@@ -1507,6 +1551,7 @@
         </div>
       </section>
 
+      <!-- Process -->
       <section id="process" class="section">
         <div class="shell">
           <header class="section-header reveal">
@@ -1561,6 +1606,7 @@
         </div>
       </section>
 
+      <!-- Contact -->
       <section id="contact" class="section">
         <div class="shell contact-grid">
           <div class="reveal">
@@ -1722,8 +1768,10 @@
   </div>
 
   <script>
+    // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Mobile nav toggle
     (function () {
       const body = document.body;
       const hamburger = document.querySelector('.hamburger');
@@ -1754,6 +1802,7 @@
       });
     })();
 
+    // Scroll reveal
     (function () {
       const elements = document.querySelectorAll('.reveal');
       if (!('IntersectionObserver' in window) || elements.length === 0) {
@@ -1776,12 +1825,68 @@
       elements.forEach((el) => observer.observe(el));
     })();
 
+    // Contact form handling
     (function () {
       const form = document.getElementById('contact-form');
       const statusEl = document.getElementById('form-status');
 
       if (!form) return;
 
-      cturn;
+      const validate = () => {
+        let valid = true;
 
-      c
+        const nameField = form.querySelector('[data-field="name"]');
+        const emailField = form.querySelector('[data-field="email"]');
+        const messageField = form.querySelector('[data-field="message"]');
+
+        const nameInput = nameField.querySelector('input');
+        const emailInput = emailField.querySelector('input');
+        const messageInput = messageField.querySelector('textarea');
+
+        // Name
+        if (!nameInput.value.trim()) {
+          nameField.classList.add('invalid');
+          valid = false;
+        } else {
+          nameField.classList.remove('invalid');
+        }
+
+        // Email
+        const emailValue = emailInput.value.trim();
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
+        if (!emailValue || !emailValid) {
+          emailField.classList.add('invalid');
+          valid = false;
+        } else {
+          emailField.classList.remove('invalid');
+        }
+
+        // Message
+        if (!messageInput.value.trim()) {
+          messageField.classList.add('invalid');
+          valid = false;
+        } else {
+          messageField.classList.remove('invalid');
+        }
+
+        return valid;
+      };
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        statusEl.classList.remove('visible');
+
+        if (!validate()) return;
+
+        // Simulated successful submission
+        form.reset();
+        statusEl.classList.add('visible');
+
+        setTimeout(() => {
+          statusEl.classList.remove('visible');
+        }, 8000);
+      });
+    })();
+  </script>
+</body>
+</html>
