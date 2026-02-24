@@ -126,8 +126,8 @@
     }
 
     .logo-placeholder {
-      width: 36px;
-      height: 36px;
+      width: 52px;
+      height: 52px;
       border-radius: var(--radius-lg);
       display: flex;
       align-items: center;
@@ -136,11 +136,22 @@
     }
 
     .brand-logo {
-      width: 36px;
-      height: 36px;
+      width: 100px;
+      height: 100px;
       display: block;
       flex-shrink: 0;
       object-fit: contain;
+    }
+
+    header .shell {
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      header .shell {
+        padding: 0 24px;
+      }
     }
 
     .brand-text {
@@ -1678,7 +1689,10 @@
               </div>
 
               <div class="product-cta-row">
-                <a href="https://slatesoftware.lemonsqueezy.com/checkout/buy/bb52744b-0cfa-464d-8f59-32e477e8335c?embed=1" class="btn btn-primary">
+                <!-- <a href="https://slatesoftware.lemonsqueezy.com/checkout/buy/bb52744b-0cfa-464d-8f59-32e477e8335c?embed=1" class="btn btn-primary">
+                  Get Curio
+                </a> -->
+                <a href="https://slatesoftware.gumroad.com/l/curio" class="btn btn-primary">
                   Get Curio
                 </a>
                 <button class="btn btn-secondary" type="button" onclick="alert('Demo coming soon. Join our newsletter to stay updated.');">
