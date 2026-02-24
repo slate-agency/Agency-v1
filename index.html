@@ -656,10 +656,11 @@
         submitBtn.textContent = 'Sending…';
 
         try {
-          const response = await fetch('https://formspree.io/f/xpqjkwkw', {
+          const formData = new FormData(form);
+          formData.append('access_key', 'fb1de949-4b91-4266-8f9c-4a6262165f82');
+          const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
-            body: new FormData(form),
-            headers: { 'Accept': 'application/json' }
+            body: formData
           });
 
           if (response.ok) {
@@ -681,4 +682,4 @@
     })();
   </script>
 </body>
-</html> 
+</html>
