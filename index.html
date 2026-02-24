@@ -126,8 +126,8 @@
     }
 
     .logo-placeholder {
-      width: 36px;
-      height: 36px;
+      width: 52px;
+      height: 52px;
       border-radius: var(--radius-lg);
       display: flex;
       align-items: center;
@@ -136,10 +136,22 @@
     }
 
     .brand-logo {
-      width: 36px;
-      height: 36px;
+      width: 100px;
+      height: 100px;
       display: block;
       flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    header .shell {
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      header .shell {
+        padding: 0 24px;
+      }
     }
 
     .brand-text {
@@ -1387,7 +1399,7 @@
       <div class="shell">
         <nav class="nav" aria-label="Primary navigation">
           <a href="#top" class="brand">
-            <img src="slate-logo.png" alt="Slate" class="brand-logo" />
+            <img src="./slate-logo.png" alt="Slate" class="brand-logo" />
             <div class="brand-text">
               <div class="brand-name">Slate</div>
               <div class="brand-tagline">Automations + Software</div>
@@ -1673,11 +1685,14 @@
               </div>
 
               <div class="curio-screenshot reveal">
-                <img src="curio-app.png" alt="Curio bookmark manager interface showing local hub, AI search, multi-LLM integration, and bookmarks organization" />
+                <img src="./curio-app.png" alt="Curio bookmark manager interface showing local hub, AI search, multi-LLM integration, and bookmarks organization" />
               </div>
 
               <div class="product-cta-row">
-                <a href="https://slatesoftware.lemonsqueezy.com/checkout/buy/bb52744b-0cfa-464d-8f59-32e477e8335c?embed=1" class="btn btn-primary">
+                <!-- <a href="https://slatesoftware.lemonsqueezy.com/checkout/buy/bb52744b-0cfa-464d-8f59-32e477e8335c?embed=1" class="btn btn-primary">
+                  Get Curio
+                </a> -->
+                <a href="https://slatesoftware.gumroad.com/l/curio" class="btn btn-primary">
                   Get Curio
                 </a>
                 <button class="btn btn-secondary" type="button" onclick="alert('Demo coming soon. Join our newsletter to stay updated.');">
