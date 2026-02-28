@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Routing Manager</title>
+    <style>
+        :root {
+            --color-bg-base: #0f172a;
+            --color-bg-elevated: #1e293b;
+            --color-bg-surface: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-primary: #38bdf8;
+            --color-primary-hover: #0ea5e9;
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-border: #475569;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg-base);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--color-bg-elevated);
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--color-border);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--color-primary);
+        }
+
+        .login-header p {
+            color: var(--color-text-muted);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background: var(--color-bg-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--color-primary);
+            color: var(--color-bg-base);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-surface);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--color-bg-elevated);
+            border-right: 1px solid var(--color-border);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            color: var(--color-primary);
+        }
+
+        .sidebar-nav {
+            padding: 24px 0;
+        }
+
+        .nav-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .nav-item:hover {
+            background: var(--color-bg-surface);
+            color: var(--color-text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--color-bg-surface);
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--color-text-muted);
+            font-size: 14px;
+        }
+
+        .card {
+            background: var(--color-bg-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--color-bg-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--color-border);
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-text-muted);
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background: var(--color-bg-surface);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--color-success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--color-warning);
+        }
+
+        .badge-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--color-error);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--color-bg-surface);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--color-text-primary);
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--color-success);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            padding: 8px 16px;
+            background: var(--color-primary);
+            color: var(--color-bg-base);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--color-bg-elevated);
+            border-radius: 12px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--color-border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: var(--color-text-primary);
+        }
+
+        .domain-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--color-bg-surface);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .qr-code canvas {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .code-input {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .code-digit {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 12px 24px;
+            margin: 24px;
+            background: var(--color-error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Email Routing Manager</h1>
+                <p>Sign in to manage your email routing</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2FA Setup Screen -->
+    <div id="twoFactorSetup" class="login-container" style="display: none;">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Set Up Two-Factor Authentication</h1>
+                <p>Scan this QR code with your authenticator app</p>
+            </div>
+            <div class="qr-code" id="qrCodeContainer"></div>
+            <p style="text-align: center; color: var(--color-text-muted); font-size: 13px; margin-bottom: 20px;">
+                Secret Key: <strong id="secretKey"></strong>
+            </p>
+            <div class="form-group">
+                <label for="verifyCode">Enter verification code</label>
+                <input type="text" id="verifyCode" maxlength="6" placeholder="000000" style="text-align: center; font-size: 20px; letter-spacing: 8px;">
+            </div>
+            <button onclick="verify2FA()" class="btn">Verify &amp; Continue</button>
+        </div>
+    </div>
+
+    <!-- 2FA Verification Screen -->
+    <div id="twoFactorVerify" class="login-container" style="display: none;">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Two-Factor Authentication</h1>
+                <p>Enter the 6-digit code from your authenticator app</p>
+            </div>
+            <div class="code-input">
+                <input type="text" class="code-digit" maxlength="1" data-index="0">
+                <input type="text" class="code-digit" maxlength="1" data-index="1">
+                <input type="text" class="code-digit" maxlength="1" data-index="2">
+                <input type="text" class="code-digit" maxlength="1" data-index="3">
+                <input type="text" class="code-digit" maxlength="1" data-index="4">
+                <input type="text" class="code-digit" maxlength="1" data-index="5">
+            </div>
+            <button onclick="verifyLogin2FA()" class="btn">Verify &amp; Sign In</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>📧 Email Routing</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item active" onclick="showPage('overview')">Overview</div>
+                <div class="nav-item" onclick="showPage('addresses')">Custom Addresses</div>
+                <div class="nav-item" onclick="showPage('settings')">Settings</div>
+            </nav>
+            <button class="logout-btn" onclick="logout()">Sign Out</button>
+        </div>
+
+        <div class="main-content">
+            <!-- Overview Page -->
+            <div id="overviewPage" class="page active">
+                <div class="page-header">
+                    <h1>Email Routing</h1>
+                    <p>Monitor your email routing activity and statistics</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Custom Addresses</div>
+                        <div class="stat-value" id="totalAddresses">5</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Received</div>
+                        <div class="stat-value" id="totalReceived">92</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Forwarded</div>
+                        <div class="stat-value" id="totalForwarded">31</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Delivery Failed</div>
+                        <div class="stat-value" id="totalFailed">61</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Configuration Summary</h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div>
+                            <div class="stat-label">Destination Addresses</div>
+                            <div class="stat-value" style="font-size: 24px;">2</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Domain</div>
+                            <div class="stat-value" style="font-size: 24px;">1</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Routing Status</div>
+                            <span class="badge badge-success">Enabled</span>
+                        </div>
+                        <div>
+                            <div class="stat-label">DNS Records</div>
+                            <span class="badge badge-success">Configured</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Sender</th>
+                                <th>Custom Address</th>
+                                <th>Received</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityLog">
+                            <tr>
+                                <td>noreply@google.com</td>
+                                <td>support@slate-automation.com</td>
+                                <td>9 minutes ago</td>
+                                <td><span class="badge badge-error">Delivery Failed</span></td>
+                            </tr>
+                            <tr>
+                                <td>noreply@google.com</td>
+                                <td>support@slate-automation.com</td>
+                                <td>26 minutes ago</td>
+                                <td><span class="badge badge-error">Delivery Failed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Custom Addresses Page -->
+            <div id="addressesPage" class="page">
+                <div class="page-header">
+                    <h1>Custom Addresses</h1>
+                    <p>Create custom email addresses and set the action to take on received emails</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Email Addresses</h3>
+                        <button class="btn-icon" onclick="showAddAddressModal()">+ Create Address</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Custom Address</th>
+                                <th>Action</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="addressesList">
+                            <tr>
+                                <td>support@slate-automation.com</td>
+                                <td>Send to an email</td>
+                                <td>slate-automation@outlook.com</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px;" onclick="editAddress(0)">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>billing@slate-automation.com</td>
+                                <td>Send to an email</td>
+                                <td>slate-automation@outlook.com</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px;" onclick="editAddress(1)">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>admin@slate-automation.com</td>
+                                <td>Send to an email</td>
+                                <td>slate-automation@outlook.com</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px;" onclick="editAddress(2)">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>contact@slate-automation.com</td>
+                                <td>Send to an email</td>
+                                <td>slate-automation@outlook.com</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px;" onclick="editAddress(3)">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>info@slate-automation.com</td>
+                                <td>Send to an email</td>
+                                <td>slate-automation@outlook.com</td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px;" onclick="editAddress(4)">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page">
+                <div class="page-header">
+                    <h1>Settings</h1>
+                    <p>Configure your email routing settings</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Subaddressing</h3>
+                    </div>
+                    <p class="info-text">Use the "+" separator to augment your custom addresses with detail information (address+detail@example.com).</p>
+                    <div class="checkbox-group" style="margin-top: 16px;">
+                        <input type="checkbox" id="subaddressing">
+                        <label for="subaddressing" style="margin-bottom: 0;">Enable subaddressing</label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Domain Configuration</h3>
+                    </div>
+                    <p class="info-text">A combination of MX and TXT records need to be added to your DNS for Email Routing to be able to receive and route emails appropriately.</p>
+                    <div class="domain-info">
+                        <div>
+                            <div style="font-weight: 600;">slate-automation.com</div>
+                            <div style="font-size: 13px; color: var(--color-text-muted);">Routing Status: <span class="badge badge-success" style="margin-left: 8px;">Enabled</span></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; color: var(--color-text-muted);">Email DNS: <span class="badge badge-success" style="margin-left: 8px;">Configured</span></div>
+                            <div style="font-size: 13px; color: var(--color-text-muted); margin-top: 4px;">MX: 🔒 Locked</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Destination Addresses</h3>
+                        <button class="btn-icon" onclick="showAddDestinationModal()">+ Add Destination</button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Email Address</th>
+                                <th>Verified</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>slate-automation@outlook.com</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px; background: var(--color-error);">Remove</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>backup@gmail.com</td>
+                                <td><span class="badge badge-success">Verified</span></td>
+                                <td>
+                                    <button class="btn-icon" style="padding: 6px 12px; font-size: 12px; background: var(--color-error);">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Two-Factor Authentication</h3>
+                    </div>
+                    <p class="info-text">Your account is protected with two-factor authentication. You can disable it below.</p>
+                    <button class="btn-icon" style="background: var(--color-error); margin-top: 16px;" onclick="disable2FA()">Disable 2FA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Address Modal -->
+    <div id="addAddressModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Custom Address</h2>
+                <button class="close-btn" onclick="closeModal('addAddressModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="newAddress">Custom Address</label>
+                <input type="text" id="newAddress" placeholder="username@slate-automation.com">
+            </div>
+            <div class="form-group">
+                <label for="newDestination">Destination Email</label>
+                <select id="newDestination">
+                    <option>slate-automation@outlook.com</option>
+                    <option>backup@gmail.com</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button class="btn" onclick="addAddress()">Create Address</button>
+                <button class="btn btn-secondary" onclick="closeModal('addAddressModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Destination Modal -->
+    <div id="addDestinationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Destination Address</h2>
+                <button class="close-btn" onclick="closeModal('addDestinationModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="newDestEmail">Email Address</label>
+                <input type="email" id="newDestEmail" placeholder="your-email@example.com">
+            </div>
+            <p class="info-text">A verification email will be sent to this address. You must verify it before it can receive forwarded emails.</p>
+            <div class="btn-group">
+                <button class="btn" onclick="addDestination()">Add &amp; Verify</button>
+                <button class="btn btn-secondary" onclick="closeModal('addDestinationModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple QR Code generation (basic implementation)
+        function generateQRCode(text) {
+            const container = document.getElementById('qrCodeContainer');
+            const size = 200;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Simple grid pattern for demo
+            ctx.fillStyle = '#000000';
+            const cellSize = size / 25;
+            
+            for (let i = 0; i < 25; i++) {
+                for (let j = 0; j < 25; j++) {
+                    if (Math.random() > 0.5) {
+                        ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+            
+            container.innerHTML = '';
+            container.appendChild(canvas);
+        }
+
+        // Generate random secret for 2FA
+        function generateSecret() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+            let secret = '';
+            for (let i = 0; i < 16; i++) {
+                secret += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return secret;
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Check if user has 2FA setup
+            const has2FA = localStorage.getItem('has2FA') === 'true';
+            
+            if (!has2FA) {
+                // First login - setup 2FA
+                const secret = generateSecret();
+                localStorage.setItem('2fa_secret', secret);
+                document.getElementById('secretKey').textContent = secret;
+                generateQRCode('otpauth://totp/EmailRouting?secret=' + secret);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('twoFactorSetup').style.display = 'flex';
+            } else {
+                // Show 2FA verification
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('twoFactorVerify').style.display = 'flex';
+                setupCodeInput();
+            }
+        });
+
+        // Setup code input auto-advance
+        function setupCodeInput() {
+            const inputs = document.querySelectorAll('.code-digit');
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    if (e.target.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        // Verify 2FA setup
+        function verify2FA() {
+            const code = document.getElementById('verifyCode').value;
+            if (code.length === 6) {
+                localStorage.setItem('has2FA', 'true');
+                localStorage.setItem('isLoggedIn', 'true');
+                showApp();
+            } else {
+                alert('Please enter a 6-digit code');
+            }
+        }
+
+        // Verify 2FA login
+        function verifyLogin2FA() {
+            const inputs = document.querySelectorAll('.code-digit');
+            const code = Array.from(inputs).map(input => input.value).join('');
+            
+            if (code.length === 6) {
+                localStorage.setItem('isLoggedIn', 'true');
+                showApp();
+            } else {
+                alert('Please enter a complete 6-digit code');
+            }
+        }
+
+        // Show main app
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('twoFactorSetup').style.display = 'none';
+            document.getElementById('twoFactorVerify').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            location.reload();
+        }
+
+        // Disable 2FA
+        function disable2FA() {
+            if (confirm('Are you sure you want to disable two-factor authentication?')) {
+                localStorage.removeItem('has2FA');
+                localStorage.removeItem('2fa_secret');
+                alert('Two-factor authentication has been disabled. It will be set up again on your next login.');
+            }
+        }
+
+        // Page navigation
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(pageName + 'Page').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Modal functions
+        function showAddAddressModal() {
+            document.getElementById('addAddressModal').style.display = 'flex';
+        }
+
+        function showAddDestinationModal() {
+            document.getElementById('addDestinationModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function addAddress() {
+            const address = document.getElementById('newAddress').value;
+            const destination = document.getElementById('newDestination').value;
+            
+            if (address && destination) {
+                alert('Custom address created: ' + address + ' → ' + destination);
+                closeModal('addAddressModal');
+                // In real app, would add to table
+            } else {
+                alert('Please fill in all fields');
+            }
+        }
+
+        function addDestination() {
+            const email = document.getElementById('newDestEmail').value;
+            
+            if (email) {
+                alert('Verification email sent to: ' + email);
+                closeModal('addDestinationModal');
+                // In real app, would add to table after verification
+            } else {
+                alert('Please enter an email address');
+            }
+        }
+
+        function editAddress(index) {
+            alert('Edit address at index ' + index);
+        }
+
+        // Check if already logged in on page load
+        window.addEventListener('load', function() {
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                showApp();
+            }
+        });
+    </script>
+</body>
+</html>
+
