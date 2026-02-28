@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy – Gist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0b;
+      --surface: #111113;
+      --border: #1e1e22;
+      --text: #e8e8ed;
+      --muted: #6e6e7a;
+      --accent: #4f7bff;
+      --accent2: #8b5cf6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* Background grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      padding: 48px 24px 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: color 0.2s;
+      margin-bottom: 48px;
+    }
+    .back:hover { color: var(--text); }
+    .back svg { width: 14px; height: 14px; }
+
+    .app-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px 6px 8px;
+      margin-bottom: 24px;
+    }
+
+    .app-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #4f7bff, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      color: white;
+    }
+
+    .app-tag span {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 64px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 96px;
+    }
+
+    section {
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    p {
+      color: #b0b0bc;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    .highlight-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-card .label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .contact-card .value {
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .contact-card a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .contact-card a:hover { text-decoration: underline; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 8px 0 24px; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer p {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="https://www.slate-automation.com">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M10 3L5 8l5 5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    slate-automation.com
+  </a>
+
+  <div class="app-tag">
+    <div class="app-icon">G</div>
+    <span>Gist – Token Optimizer</span>
+  </div>
+
+  <h1>Privacy Policy</h1>
+  <p class="meta">Last updated: February 28, 2026 &nbsp;·&nbsp; Effective immediately</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>Overview</h2>
+    <div class="highlight-box">
+      <p>Gist does not collect, store, or transmit any personal data. All processing happens entirely on your device.</p>
+    </div>
+    <p>Slate Automation operates the Gist mobile application. This Privacy Policy explains our approach to user data — which is, simply, that we do not collect any.</p>
+  </section>
+
+  <section>
+    <h2>Data We Collect</h2>
+    <p>Gist collects no personal data whatsoever. Specifically:</p>
+    <div class="badge-row">
+      <span class="badge">✓ No account required</span>
+      <span class="badge">✓ No text leaves your device</span>
+      <span class="badge">✓ No analytics</span>
+      <span class="badge">✓ No advertising IDs</span>
+      <span class="badge">✓ No crash reporting</span>
+      <span class="badge">✓ No third-party SDKs</span>
+    </div>
+    <p>Any text you enter into the app is processed locally and is never transmitted to Slate Automation's servers or any third party.</p>
+  </section>
+
+  <section>
+    <h2>Third-Party Services</h2>
+    <p>Gist does not integrate any third-party analytics platforms, advertising networks, or data brokers. The app makes no external network requests related to user data.</p>
+  </section>
+
+  <section>
+    <h2>Children's Privacy</h2>
+    <p>Gist does not knowingly collect data from any user, including children under the age of 13 (or the applicable minimum age in their jurisdiction). Since no data is collected from anyone, children are equally protected.</p>
+  </section>
+
+  <section>
+    <h2>EU / EEA — GDPR</h2>
+    <p>Under the General Data Protection Regulation (EU) 2016/679, data controllers must state a lawful basis for processing personal data. As Gist processes no personal data, GDPR obligations relating to data processing, storage, or transfer do not apply. No consent is required.</p>
+  </section>
+
+  <section>
+    <h2>Vietnam — Decree 13/2023/NĐ-CP</h2>
+    <p>In accordance with Vietnam's Decree on Personal Data Protection (Decree 13/2023/NĐ-CP, effective July 1, 2023), we confirm that Gist collects no personal data from users in Vietnam or any other jurisdiction. No data processing consent is required as no data is processed.</p>
+  </section>
+
+  <section>
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. Any changes will be posted at this URL with an updated "last updated" date. Your continued use of Gist after any changes constitutes acceptance of the updated policy.</p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <div class="contact-card">
+      <div>
+        <div class="label">Company</div>
+        <div class="value">Slate Automation</div>
+      </div>
+      <hr class="divider" />
+      <div>
+        <div class="label">Email</div>
+        <div class="value"><a href="mailto:admin@slate-automation.com">admin@slate-automation.com</a></div>
+      </div>
+      <hr class="divider" />
+      <div>
+        <div class="label">Website</div>
+        <div class="value"><a href="https://www.slate-automation.com">www.slate-automation.com</a></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 Slate Automation. All rights reserved.</p>
+  <p><a href="https://www.slate-automation.com">slate-automation.com</a></p>
+</footer>
+
+</body>
+</html>
