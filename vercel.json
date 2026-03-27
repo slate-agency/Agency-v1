@@ -1,3 +1,13 @@
 {
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/promo",
+      "destination": "https://agency-v1-eta.vercel.app/"
+    },
+    {
+      "source": "/promo/:path*",
+      "destination": "https://agency-v1-eta.vercel.app/:path*"
+    }
+  ]
 }
