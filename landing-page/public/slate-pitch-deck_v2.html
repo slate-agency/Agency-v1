@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slate AI Browser — Investor Pitch 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --s50:#F7F5F1;
+  
+  --s100:#EDEAE4;
+  --s200:#D9D4CC;
+  --s400:#9A9188;
+  --s600:#6B6258;
+  --s900:#1A1713;
+  --elec:#007AFF;
+  --elec-light:rgba(0,122,255,0.10);
+  --elec-glow:rgba(0,122,255,0.22);
+  --green:#34C759;
+  --orange:#FF9F0A;
+  --dark:#0D0C0B;
+  --dark2:#1A1917;
+  --db:rgba(255,255,255,0.07);
+}
+
+html{scroll-behavior:smooth;}
+body{
+  background:var(--s50);
+  color:var(--s900);
+  font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* CANVAS */
+#pc{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* NAV DOTS */
+.ndots{
+  position:fixed;right:24px;top:50%;transform:translateY(-50%);
+  z-index:200;display:flex;flex-direction:column;gap:9px;
+}
+.nd{
+  width:7px;height:7px;border-radius:50%;background:rgba(100,95,88,0.3);
+  cursor:pointer;border:none;transition:all 280ms ease;padding:0;
+}
+.nd.act{background:var(--elec);transform:scale(1.5);box-shadow:0 0 10px var(--elec-glow);}
+
+/* BASE SECTION */
+section{
+  position:relative;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;z-index:1;overflow:hidden;
+}
+.ct{width:100%;max-width:1100px;padding:0 52px;margin:0 auto;}
+
+/* TYPOGRAPHY */
+.disp{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;letter-spacing:-0.03em;line-height:1.04;}
+.dxl{font-size:clamp(54px,8.5vw,108px);}
+.dlg{font-size:clamp(38px,5.5vw,72px);}
+.dmd{font-size:clamp(26px,3.5vw,46px);}
+.lbl{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--elec);}
+.blg{font-size:18px;font-weight:300;line-height:1.75;color:var(--s600);}
+.bmd{font-size:14px;font-weight:400;line-height:1.7;color:var(--s600);}
+
+/* REVEAL ANIMATIONS */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
+.rv.vis{opacity:1;transform:none;}
+.d1{transition-delay:.08s;} .d2{transition-delay:.18s;} .d3{transition-delay:.28s;}
+.d4{transition-delay:.38s;} .d5{transition-delay:.48s;} .d6{transition-delay:.58s;}
+
+/* HERO */
+.sh{background:rgba(247,245,241,0.0);}
+.logo{width:90px;height:90px;border-radius:22px;display:block;margin:0 auto 36px;
+  animation:flt 7s ease-in-out infinite;
+  filter:drop-shadow(0 10px 36px rgba(0,122,255,0.25)) drop-shadow(0 2px 8px rgba(0,0,0,0.12));}
+.closing-logo{width:76px;height:76px;border-radius:20px;display:block;margin:0 auto 36px;
+  animation:flt 7s ease-in-out infinite;
+  filter:drop-shadow(0 0 28px rgba(0,122,255,0.45));}
+@keyframes flt{0%,100%{transform:translateY(0px);}50%{transform:translateY(-14px);}}
+.hero-hl{max-width:840px;margin:0 auto 22px;}
+.hero-sub{max-width:560px;margin:0 auto 48px;font-size:19px;font-weight:300;color:var(--s600);line-height:1.75;text-align:center;}
+.pillrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:60px;}
+.pill{padding:6px 16px;border-radius:999px;font-size:12px;font-weight:500;letter-spacing:0.03em;
+  border:1px solid var(--s200);color:var(--s600);background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);}
+.pill.acc{background:var(--elec-light);border-color:rgba(0,122,255,0.28);color:var(--elec);}
+.scrl{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--s400);
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;animation:bnc 2.5s ease-in-out infinite;}
+@keyframes bnc{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+
+/* PROBLEM */
+.spblm{background:rgba(237,234,228,0.97);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid var(--s200);border-radius:20px;overflow:hidden;margin-bottom:56px;}
+.si{padding:44px 36px;background:rgba(255,255,255,0.7);transition:background 300ms;border-right:1px solid var(--s200);}
+.si:last-child{border-right:none;}
+.si:hover{background:rgba(255,255,255,0.95);}
+.sn{font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:700;line-height:1;
+  letter-spacing:-0.04em;color:var(--s900);margin-bottom:8px;}
+.sn .acc{color:var(--elec);}
+.sl{font-size:13px;color:var(--s600);line-height:1.5;}
+
+/* SOLUTION — DARK */
+.sdark{background:rgba(13,12,11,0.97);}
+
+/* BROWSER MOCKUP */
+.bmock{
+  border-radius:16px;overflow:hidden;background:#1A1917;
+  border:1px solid rgba(255,255,255,0.09);
+  box-shadow:0 48px 120px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04),0 0 100px rgba(0,122,255,0.1);
+  animation:fmock 9s ease-in-out infinite;max-width:740px;margin:0 auto;
+}
+@keyframes fmock{
+  0%,100%{transform:translateY(0) rotate(-0.2deg);}
+  50%{transform:translateY(-18px) rotate(0.2deg);}
+}
+.btb{background:#111010;padding:11px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tls{display:flex;gap:6px;}
+.tl{width:11px;height:11px;border-radius:50%;}
+.tl-r{background:#FF5F57;} .tl-y{background:#FFBD2E;} .tl-g{background:#28C840;}
+.bsps{display:flex;gap:4px;flex:1;}
+.sc{padding:3px 10px;border-radius:6px;font-size:11px;color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;}
+.sc.act{background:rgba(0,122,255,0.18);color:#007AFF;}
+.btbar{background:#1A1917;padding:8px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.04);}
+.abar{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);
+  border-radius:8px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,0.45);font-family:'DM Sans',sans-serif;}
+.aichips{display:flex;gap:4px;}
+.aic{padding:4px 10px;border-radius:6px;font-size:10px;font-family:'DM Sans',sans-serif;font-weight:500;}
+.aic-b{background:rgba(0,122,255,0.18);color:#007AFF;border:1px solid rgba(0,122,255,0.28);}
+.aic-g{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.07);}
+.bbody{display:flex;height:265px;}
+.bsb{width:48px;background:#111010;border-right:1px solid rgba(255,255,255,0.04);
+  display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:8px;}
+.bss{width:29px;height:29px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.bcon{flex:1;background:#1A1917;padding:18px;overflow:hidden;}
+.ccard{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;padding:13px 15px;margin-bottom:9px;}
+.ctit{font-size:11px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:3px;font-family:'DM Sans',sans-serif;}
+.cbod{font-size:10px;color:rgba(255,255,255,0.38);line-height:1.55;font-family:'DM Sans',sans-serif;}
+.agstat{display:flex;align-items:center;gap:6px;font-size:10px;color:#34C759;
+  font-family:'DM Sans',sans-serif;margin-top:7px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#34C759;
+  box-shadow:0 0 8px rgba(52,199,89,0.8);animation:pls 2s ease-in-out infinite;}
+@keyframes pls{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* SPACES */
+.spcs-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;max-width:500px;}
+.spcard{border-radius:18px;padding:24px;border:1px solid;transition:transform 320ms ease,box-shadow 320ms ease;
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);cursor:default;}
+.spcard:hover{transform:translateY(-7px);}
+.spcard.bl{border-color:rgba(0,122,255,0.25);} .spcard.bl:hover{box-shadow:0 18px 48px rgba(0,122,255,0.13);}
+.spcard.gr{border-color:rgba(52,199,89,0.25);} .spcard.gr:hover{box-shadow:0 18px 48px rgba(52,199,89,0.12);}
+.spcard.or{border-color:rgba(255,159,10,0.25);} .spcard.or:hover{box-shadow:0 18px 48px rgba(255,159,10,0.1);}
+.spcard.gy{border-color:rgba(100,96,88,0.2);} .spcard.gy:hover{box-shadow:0 18px 48px rgba(0,0,0,0.06);}
+.spic{font-size:26px;display:block;margin-bottom:10px;}
+.spnm{font-size:14px;font-weight:600;color:var(--s900);}
+.spmeta{font-size:11px;color:var(--s400);margin-top:2px;}
+
+/* CMD PALETTE */
+.cmd{background:#111010;border:1px solid rgba(255,255,255,0.09);border-radius:18px;
+  overflow:hidden;box-shadow:0 36px 90px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04);max-width:530px;}
+.cmdinrow{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.cmdic{font-size:16px;opacity:0.45;}
+.cmdtxt{flex:1;font-size:15px;color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;}
+.cmdsc{padding:3px 8px;background:rgba(255,255,255,0.07);border-radius:5px;font-size:11px;
+  color:rgba(255,255,255,0.35);font-family:'DM Sans',sans-serif;}
+.cmdr{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid rgba(255,255,255,0.03);
+  transition:background 140ms;}
+.cmdr:hover{background:rgba(255,255,255,0.03);}
+.cmdr.act{background:rgba(0,122,255,0.09);}
+.cmdric{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.cmdrl{flex:1;font-size:13px;color:rgba(255,255,255,0.65);font-family:'DM Sans',sans-serif;}
+.cmdrsc{font-size:11px;color:rgba(255,255,255,0.22);font-family:'DM Sans',sans-serif;}
+
+/* FEATURE CARDS */
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.fc{background:rgba(255,255,255,0.85);border:1px solid var(--s200);border-radius:20px;padding:34px 28px;
+  transition:transform 320ms ease,box-shadow 320ms ease,border-color 320ms ease;backdrop-filter:blur(8px);cursor:default;}
+.fc:hover{transform:translateY(-8px);box-shadow:0 22px 56px rgba(0,0,0,0.07),0 0 0 1px rgba(0,122,255,0.18);border-color:rgba(0,122,255,0.18);}
+.ficn{width:48px;height:48px;border-radius:13px;background:var(--elec-light);
+  display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.ftit{font-size:17px;font-weight:600;color:var(--s900);margin-bottom:8px;letter-spacing:-0.02em;}
+.fdsc{font-size:13px;color:var(--s600);line-height:1.7;}
+
+/* MODES */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.mcard{border-radius:26px;padding:46px 38px;border:1px solid transparent;
+  transition:transform 320ms ease,box-shadow 320ms ease;cursor:default;}
+.mcard:hover{transform:translateY(-10px);}
+.mf{background:linear-gradient(140deg,#EAF4FF,#F3F8FF);border-color:rgba(0,122,255,0.18);}
+.mf:hover{box-shadow:0 28px 70px rgba(0,122,255,0.14);}
+.mr{background:linear-gradient(140deg,#EDFFF3,#F5FFF8);border-color:rgba(52,199,89,0.18);}
+.mr:hover{box-shadow:0 28px 70px rgba(52,199,89,0.13);}
+.mw{background:linear-gradient(140deg,#FFF8EC,#FFFCF5);border-color:rgba(255,159,10,0.18);}
+.mw:hover{box-shadow:0 28px 70px rgba(255,159,10,0.1);}
+.memi{font-size:44px;display:block;margin-bottom:22px;}
+.mnm{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;letter-spacing:-0.02em;margin-bottom:13px;}
+.mdsc{font-size:14px;font-weight:300;color:var(--s600);line-height:1.75;}
+
+/* PERMISSIONS */
+.prow{background:rgba(255,255,255,0.85);border:1px solid var(--s200);border-radius:14px;
+  padding:14px 18px;display:flex;align-items:center;gap:14px;
+  transition:transform 260ms ease,box-shadow 260ms ease;backdrop-filter:blur(8px);margin-bottom:10px;}
+.prow:hover{transform:translateX(8px);box-shadow:-4px 0 0 var(--elec),6px 6px 24px rgba(0,0,0,0.04);}
+.picw{width:36px;height:36px;border-radius:10px;background:var(--s100);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.plbl{font-size:13px;font-weight:500;flex:1;}
+.pbadge{padding:2px 8px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.06em;}
+.blo{background:rgba(52,199,89,0.1);color:var(--green);}
+.bme{background:rgba(255,159,10,0.1);color:var(--orange);}
+.bhi{background:rgba(255,59,48,0.1);color:#FF3B30;}
+.tgl{width:40px;height:22px;border-radius:999px;position:relative;flex-shrink:0;}
+.ton{background:var(--elec);}.tof{background:var(--s200);}
+.tth{position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:3px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.18);transition:left 200ms;}
+.ton .tth{left:21px;}.tof .tth{left:3px;}
+.tmbadge{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:999px;
+  background:rgba(255,159,10,0.08);border:1px solid rgba(255,159,10,0.28);color:var(--orange);
+  font-size:13px;font-weight:500;margin-top:20px;}
+
+/* LOCAL AI SLIDE */
+.saib{background:rgba(13,12,11,0.98);color:white;text-align:center;}
+.aibig{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;
+  border-radius:999px;background:rgba(0,122,255,0.1);border:1px solid rgba(0,122,255,0.28);margin-bottom:40px;}
+.aidot{width:8px;height:8px;border-radius:50%;background:var(--elec);
+  box-shadow:0 0 12px rgba(0,122,255,0.9);animation:pls 2s infinite;}
+.aibtxt{font-size:13px;color:var(--elec);font-weight:500;}
+.mcard2{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  border-radius:22px;padding:34px;max-width:500px;margin:48px auto 0;text-align:left;}
+.mnm2{font-family:'Cormorant Garamond',serif;font-size:30px;color:white;font-weight:600;margin-bottom:6px;}
+.mmeta{font-size:12px;color:rgba(255,255,255,0.35);}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;}
+.mst{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:11px;padding:14px;}
+.mstv{font-size:20px;font-weight:600;color:var(--elec);}
+.mstk{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;}
+
+/* COMPARISON */
+.ctable{width:100%;border-collapse:separate;border-spacing:0;border-radius:18px;
+  overflow:hidden;border:1px solid var(--s200);}
+.ctable th{background:var(--s900);color:rgba(255,255,255,0.85);padding:16px 22px;
+  text-align:left;font-size:13px;font-weight:500;}
+.ctable .hcol{background:rgba(0,122,255,0.85);color:white;}
+.ctable td{padding:13px 22px;border-bottom:1px solid var(--s200);font-size:13px;
+  background:rgba(255,255,255,0.8);}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable td:first-child{color:var(--s600);font-weight:500;}
+.ctable .htd{background:rgba(0,122,255,0.05)!important;}
+.ck{color:var(--green);font-weight:600;} .cx{color:var(--s400);} .cp{color:var(--orange);}
+
+/* ROADMAP */
+.rmrow{display:flex;align-items:center;gap:18px;padding:16px 22px;
+  background:rgba(255,255,255,0.82);border:1px solid var(--s200);border-radius:14px;
+  margin-bottom:9px;transition:transform 260ms ease;backdrop-filter:blur(8px);}
+.rmrow:hover{transform:translateX(9px);}
+.rmst{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.rst-d{background:var(--green);box-shadow:0 0 8px rgba(52,199,89,0.6);}
+.rst-a{background:var(--elec);box-shadow:0 0 8px rgba(0,122,255,0.6);animation:pls 2s infinite;}
+.rst-s{background:var(--s200);}
+.rmlbl{font-size:14px;font-weight:400;flex:1;}
+.rmtag{padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.04em;}
+.tship{background:rgba(52,199,89,0.1);color:var(--green);}
+.tbld{background:rgba(0,122,255,0.1);color:var(--elec);}
+.tnxt{background:var(--s100);color:var(--s600);}
+
+/* AGENT TASK VISUAL */
+.astep{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:11px;margin-bottom:8px;}
+.as-done{background:rgba(52,199,89,0.06);border:1px solid rgba(52,199,89,0.14);}
+.as-act{background:rgba(0,122,255,0.09);border:1px solid rgba(0,122,255,0.22);}
+.as-pnd{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);opacity:0.5;}
+
+/* CTA */
+.ctabtn{display:inline-flex;align-items:center;gap:8px;padding:14px 34px;border-radius:999px;
+  background:var(--elec);color:white;font-size:15px;font-weight:600;cursor:pointer;border:none;
+  font-family:'DM Sans',sans-serif;box-shadow:0 8px 36px rgba(0,122,255,0.38);
+  transition:transform 200ms ease,box-shadow 200ms ease;margin-top:40px;letter-spacing:.01em;}
+.ctabtn:hover{transform:translateY(-3px);box-shadow:0 14px 48px rgba(0,122,255,0.5);}
+
+</style>
+</head>
+<body>
+
+<canvas id="pc"></canvas>
+<nav class="ndots" id="navDots"></nav>
+
+<!-- ═══════════════════════════════════════════ HERO ═══ -->
+<section class="sh" id="s1" style="text-align:center;padding:100px 0 80px;">
+<div class="ct">
+  <img src="./logo.png" alt="Slate" class="logo rv"/>
+  <p class="lbl rv d1" style="margin-bottom:18px;">Slate Automations + Software</p>
+  <h1 class="disp dxl hero-hl rv d2" style="text-align:center;">
+    The Browser<br/>That Thinks.
+  </h1>
+  <p class="hero-sub rv d3">
+    Goal-native. Privacy-first. Agent-powered.<br/>
+    Built for how you <em style="font-style:italic;">actually</em> work.
+  </p>
+  <div class="pillrow rv d4">
+    <span class="pill acc">✦ Local AI — On Device</span>
+    <span class="pill">⌘K Command Palette</span>
+    <span class="pill">Spaces &amp; Tabs</span>
+    <span class="pill">60-min Permission Timer</span>
+    <span class="pill">Focus · Research · Work</span>
+  </div>
+  <div class="scrl rv d5">
+    <span>Explore</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 3v10M3 9l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ PROBLEM ═══ -->
+<section class="spblm" id="s2">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <p class="lbl rv" style="margin-bottom:16px;">The Problem</p>
+  <h2 class="disp dlg rv d1" style="max-width:620px;margin-bottom:18px;">
+    Browsers haven't evolved.<br/><em style="font-style:italic;color:var(--s400);">Your workflow has.</em>
+  </h2>
+  <p class="blg rv d2" style="max-width:540px;margin-bottom:64px;">
+    Today's browsers are passive windows. They display pages. They don't understand your goals, they don't protect you proactively, and they don't work for you — they just wait.
+  </p>
+  <div class="stat-grid rv d3">
+    <div class="si">
+      <div class="sn"><span class="acc" data-count="26">0</span><span class="acc">+</span></div>
+      <div class="sl">Average open tabs<br/>per session</div>
+    </div>
+    <div class="si">
+      <div class="sn"><span class="acc" data-count="3">0</span><span class="acc">h</span></div>
+      <div class="sl">Daily hours lost to<br/>browser inefficiency</div>
+    </div>
+    <div class="si">
+      <div class="sn"><span class="acc" data-count="0">0</span><span class="acc">%</span></div>
+      <div class="sl">Browsers that work<br/>proactively for you</div>
+    </div>
+  </div>
+  <p class="bmd rv d4" style="max-width:520px;margin-top:36px;font-style:italic;color:var(--s400);">
+    "The browser was invented in 1990. It's still a window. We're building the agent."
+  </p>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SOLUTION ═══ -->
+<section class="sdark" id="s3">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="text-align:center;margin-bottom:56px;">
+    <p class="lbl rv" style="color:rgba(255,255,255,0.4);margin-bottom:16px;">The Solution</p>
+    <h2 class="disp dlg rv d1" style="color:white;max-width:640px;margin:0 auto 18px;">Meet Slate.</h2>
+    <p class="blg rv d2" style="max-width:520px;margin:0 auto;color:rgba(255,255,255,0.45);">
+      An agentic browser. A local AI companion. A workspace that adapts to your goals — in real time.
+    </p>
+  </div>
+  <div class="bmock rv d3">
+    <div class="btb">
+      <div class="tls"><div class="tl tl-r"></div><div class="tl tl-y"></div><div class="tl tl-g"></div></div>
+      <div class="bsps">
+        <div class="sc act">⬡ Research</div>
+        <div class="sc">◈ Work</div>
+        <div class="sc">◎ Personal</div>
+        <div class="sc">◌ Anonymous</div>
+        <div class="sc" style="margin-left:4px;color:rgba(255,255,255,0.25);">+ Space</div>
+      </div>
+    </div>
+    <div class="btbar">
+      <div class="abar">anthropic.com — Anthropic · AI Safety Research</div>
+      <div class="aichips">
+        <div class="aic aic-b">✦ AI</div>
+        <div class="aic aic-g">Summarize</div>
+        <div class="aic aic-g">Explain</div>
+      </div>
+    </div>
+    <div class="bbody">
+      <div class="bsb">
+        <div class="bss" style="background:rgba(0,122,255,0.18);color:#007AFF;">⬡</div>
+        <div class="bss" style="background:rgba(52,199,89,0.1);color:#34C759;">◈</div>
+        <div class="bss" style="background:rgba(255,159,10,0.1);color:#FF9F0A;">◎</div>
+        <div class="bss" style="color:rgba(255,255,255,0.18);">◌</div>
+      </div>
+      <div class="bcon">
+        <div class="ccard">
+          <div class="ctit">✦ AI Summary — Anthropic</div>
+          <div class="cbod">Anthropic is an AI safety company building reliable, interpretable, and steerable AI. Research spans alignment, interpretability, and scalable oversight of advanced systems...</div>
+        </div>
+        <div class="ccard">
+          <div class="ctit">🔬 Research Mode · Active</div>
+          <div class="cbod">12 tabs in context · Auto-clustered by topic · Notes synced to Space</div>
+          <div class="agstat"><div class="sdot"></div>Agent working · Summarizing tab 4 of 12...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FEATURES ═══ -->
+<section id="s4" style="background:rgba(247,245,241,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <p class="lbl rv" style="text-align:center;margin-bottom:16px;">Core Features</p>
+  <h2 class="disp dlg rv d1" style="text-align:center;max-width:640px;margin:0 auto 64px;">
+    Everything you need.<br/>Nothing you don't.
+  </h2>
+  <div class="fgrid">
+    <div class="fc rv d1">
+      <div class="ficn">⬡</div>
+      <div class="ftit">Spaces</div>
+      <div class="fdsc">Smart containers for every context — Research, Work, Personal, Anonymous. Each with its own tabs, AI memory, and permissions.</div>
+    </div>
+    <div class="fc rv d2">
+      <div class="ficn">⌘</div>
+      <div class="ftit">Command Palette</div>
+      <div class="fdsc">Hit ⌘K and command the browser in plain language. Summarize, research, navigate, switch modes — all from one intelligent interface.</div>
+    </div>
+    <div class="fc rv d3">
+      <div class="ficn">🔀</div>
+      <div class="ftit">Split Tabs</div>
+      <div class="fdsc">Work side-by-side without losing context. Split any tab within a Space to compare, research, or multitask with clarity.</div>
+    </div>
+    <div class="fc rv d1">
+      <div class="ficn">⚡</div>
+      <div class="ftit">AI Agent Tasks</div>
+      <div class="fdsc">Delegate goals to Slate's agent. Watch it execute step-by-step across the web. Get a complete brief when it's done.</div>
+    </div>
+    <div class="fc rv d2">
+      <div class="ficn">📝</div>
+      <div class="ftit">Per-Site Notes</div>
+      <div class="fdsc">Take notes on any website, attached directly to that page. Optional encryption keeps your most sensitive thoughts private.</div>
+    </div>
+    <div class="fc rv d3">
+      <div class="ficn">✦</div>
+      <div class="ftit">Summarize &amp; Explain</div>
+      <div class="fdsc">One-click AI actions on any page. Summarize dense content or ask Slate to explain complex topics in your own terms.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SPACES DEEP ═══ -->
+<section id="s5" style="background:rgba(237,234,228,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+    <div>
+      <p class="lbl rv" style="margin-bottom:16px;">Spaces</p>
+      <h2 class="disp dlg rv d1" style="margin-bottom:18px;">Your digital life,<br/>perfectly organized.</h2>
+      <p class="blg rv d2" style="margin-bottom:32px;">Spaces are intelligent containers. Each has its own tabs, AI context, notes, and permissions — siloed and secure.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:13px;" class="rv d3">
+        <li style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--s600);">
+          <span style="color:var(--elec);font-size:18px;">→</span> Create, name, and delete any number of Spaces
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--s600);">
+          <span style="color:var(--elec);font-size:18px;">→</span> Each Space has its own tab context and AI memory
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--s600);">
+          <span style="color:var(--elec);font-size:18px;">→</span> Anonymous Space — zero tracking, full isolation
+        </li>
+        <li style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--s600);">
+          <span style="color:var(--elec);font-size:18px;">→</span> Split tabs within any Space for parallel work
+        </li>
+      </ul>
+    </div>
+    <div class="spcs-grid rv d2">
+      <div class="spcard bl">
+        <span class="spic">⬡</span>
+        <div class="spnm">Research</div>
+        <div class="spmeta">12 tabs · AI context active</div>
+      </div>
+      <div class="spcard gr">
+        <span class="spic">◈</span>
+        <div class="spnm">Work</div>
+        <div class="spmeta">5 tabs · Agent running</div>
+      </div>
+      <div class="spcard or">
+        <span class="spic">◎</span>
+        <div class="spnm">Personal</div>
+        <div class="spmeta">3 tabs · Notes on</div>
+      </div>
+      <div class="spcard gy">
+        <span class="spic">◌</span>
+        <div class="spnm">Anonymous</div>
+        <div class="spmeta">Zero trace · Isolated</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ COMMAND ═══ -->
+<section id="s6" style="background:rgba(247,245,241,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+    <div class="cmd rv d1">
+      <div class="cmdinrow">
+        <span class="cmdic">⌘</span>
+        <span class="cmdtxt">Summarize all Research tabs...</span>
+        <span class="cmdsc">⌘K</span>
+      </div>
+      <div class="cmdr act"><div class="cmdric">⚡</div><span class="cmdrl">Summarize current tab</span><span class="cmdrsc">↵</span></div>
+      <div class="cmdr"><div class="cmdric">🔬</div><span class="cmdrl">Research: AI browser competitors</span><span class="cmdrsc">⌘R</span></div>
+      <div class="cmdr"><div class="cmdric">⬡</div><span class="cmdrl">New Space</span><span class="cmdrsc">⌘N</span></div>
+      <div class="cmdr"><div class="cmdric">✦</div><span class="cmdrl">Switch to Research Mode</span><span class="cmdrsc">⌘M</span></div>
+      <div class="cmdr" style="border-bottom:none;"><div class="cmdric">📝</div><span class="cmdrl">Add note to this page</span><span class="cmdrsc">⌘⌥N</span></div>
+    </div>
+    <div>
+      <p class="lbl rv" style="margin-bottom:16px;">Command + AI</p>
+      <h2 class="disp dlg rv d1" style="margin-bottom:18px;">Say it.<br/>Slate does it.</h2>
+      <p class="blg rv d2" style="margin-bottom:32px;">
+        Hit <strong style="background:var(--s200);padding:2px 8px;border-radius:5px;font-size:14px;font-weight:600;">⌘K</strong> from anywhere and command the browser in plain language. Summarize, research, navigate, delegate — one palette to rule everything.
+      </p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;" class="rv d3">
+        <span class="pill acc">✦ AI Wake Button</span>
+        <span class="pill">Summarize</span>
+        <span class="pill">Explain</span>
+        <span class="pill">⌘K Shortcut</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ AGENT ═══ -->
+<section id="s7" style="background:rgba(237,234,228,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="text-align:center;max-width:700px;margin:0 auto 64px;">
+    <p class="lbl rv" style="margin-bottom:16px;">Agent Mode</p>
+    <h2 class="disp dlg rv d1" style="margin-bottom:18px;">Delegate. Watch.<br/>Receive results.</h2>
+    <p class="blg rv d2">Give Slate a goal. The agent breaks it down, executes across the web, shows you its progress live, and delivers a complete result.</p>
+  </div>
+  <div style="max-width:580px;margin:0 auto;" class="rv d3">
+    <div style="background:#0D0C0B;border-radius:22px;padding:28px;border:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+        <div class="sdot"></div>
+        <span style="font-size:13px;color:rgba(255,255,255,0.65);font-weight:500;font-family:'DM Sans',sans-serif;">Agent · Research AI browser landscape 2026</span>
+      </div>
+      <div class="astep as-done"><span style="color:#34C759;font-size:13px;">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.55);flex:1;">Search for AI browser landscape 2025–2026</span><span style="font-size:10px;color:rgba(255,255,255,0.22);font-family:'DM Sans',sans-serif;">0.3s</span></div>
+      <div class="astep as-done"><span style="color:#34C759;font-size:13px;">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.55);flex:1;">Open top 5 results in new Research tabs</span><span style="font-size:10px;color:rgba(255,255,255,0.22);font-family:'DM Sans',sans-serif;">1.1s</span></div>
+      <div class="astep as-act"><div class="sdot" style="background:var(--elec);box-shadow:0 0 8px rgba(0,122,255,0.8);"></div><span style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.8);flex:1;">Summarize each tab into a research brief</span><span style="font-size:10px;color:var(--elec);font-family:'DM Sans',sans-serif;">running...</span></div>
+      <div class="astep as-pnd"><span style="color:rgba(255,255,255,0.18);font-size:13px;">○</span><span style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.35);flex:1;">Generate pros/cons comparison table</span></div>
+      <div class="astep as-pnd" style="margin-bottom:0;"><span style="color:rgba(255,255,255,0.18);font-size:13px;">○</span><span style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.35);flex:1;">Save research snapshot to Research Space</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ MODES ═══ -->
+<section id="s8" style="background:rgba(247,245,241,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <p class="lbl rv" style="text-align:center;margin-bottom:16px;">Adaptive Intelligence</p>
+  <h2 class="disp dlg rv d1" style="text-align:center;max-width:580px;margin:0 auto 64px;">One browser.<br/>Three minds.</h2>
+  <div class="mgrid">
+    <div class="mcard mf rv d1">
+      <span class="memi">🎯</span>
+      <div class="mnm" style="color:var(--elec);">Focus</div>
+      <div class="mdsc">Strip away everything. Just you and the page. Slate silences noise, limits tab sprawl, and protects your deep work time.</div>
+    </div>
+    <div class="mcard mr rv d2">
+      <span class="memi">🔬</span>
+      <div class="mnm" style="color:var(--green);">Research</div>
+      <div class="mdsc">Open tabs are clustered, summarized, and cross-referenced automatically. The agent runs in the background, building your brief.</div>
+    </div>
+    <div class="mcard mw rv d3">
+      <span class="memi">💼</span>
+      <div class="mnm" style="color:var(--orange);">Work</div>
+      <div class="mdsc">Task-focused layout with live agent status, quick notes, and shortcuts. See what Slate is doing — and what it's completed.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SECURITY ═══ -->
+<section id="s9" style="background:rgba(237,234,228,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+    <div>
+      <p class="lbl rv" style="margin-bottom:16px;">Security &amp; Privacy</p>
+      <h2 class="disp dlg rv d1" style="margin-bottom:18px;">You're in control.<br/><em style="color:var(--s400);font-style:italic;">Always.</em></h2>
+      <p class="blg rv d2" style="margin-bottom:24px;">Every permission is explicit, timed, and revocable. Grant the agent access — it expires automatically in 60 minutes. No surprises. No leaks.</p>
+      <div class="tmbadge rv d3">⏱ &nbsp;Permissions auto-expire · 60-min timer</div>
+      <p class="bmd rv d4" style="margin-top:24px;">Notes can be encrypted. The AI model runs locally. Nothing leaves your device without explicit, timed consent.</p>
+    </div>
+    <div class="rv d2">
+      <p style="font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--s400);margin-bottom:14px;">Agent Permissions</p>
+      <div class="prow"><div class="picw">👁</div><span class="plbl">Read DOM</span><span class="pbadge blo">LOW</span><div class="tgl ton"><div class="tth"></div></div></div>
+      <div class="prow"><div class="picw">🔗</div><span class="plbl">Open Links</span><span class="pbadge bme">MEDIUM</span><div class="tgl tof"><div class="tth"></div></div></div>
+      <div class="prow"><div class="picw">✏️</div><span class="plbl">Fill Forms</span><span class="pbadge bhi">HIGH</span><div class="tgl tof"><div class="tth"></div></div></div>
+      <div class="prow"><div class="picw">💾</div><span class="plbl">Save to Space</span><span class="pbadge blo">LOW</span><div class="tgl ton"><div class="tth"></div></div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ LOCAL AI ═══ -->
+<section class="saib" id="s10">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div class="aibig rv"><div class="aidot"></div><span class="aibtxt">Running entirely on your device</span></div>
+  <h2 class="disp dxl rv d1" style="color:white;text-align:center;max-width:720px;margin:0 auto 22px;">No cloud.<br/>No compromise.</h2>
+  <p class="blg rv d2" style="color:rgba(255,255,255,0.4);text-align:center;max-width:500px;margin:0 auto;">
+    The AI model runs 100% locally. Your browsing data never leaves your device. No subscriptions, no API calls, no exposure.
+  </p>
+  <div class="mcard2 rv d3">
+    <div class="mnm2">Qwen3.5 · 0.8B</div>
+    <div class="mmeta">Quantized GGUF · Q4_K_M · 0.55 GB · Apache 2.0 Licensed</div>
+    <div class="mstats">
+      <div class="mst"><div class="mstv">0.55 GB</div><div class="mstk">Model size on disk</div></div>
+      <div class="mst"><div class="mstv">100%</div><div class="mstk">On-device inference</div></div>
+      <div class="mst"><div class="mstv">0</div><div class="mstk">Cloud API calls</div></div>
+      <div class="mst"><div class="mstv">Apache 2.0</div><div class="mstk">Commercial license</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ COMPARISON ═══ -->
+<section id="s11" style="background:rgba(247,245,241,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <p class="lbl rv" style="text-align:center;margin-bottom:16px;">Competitive Edge</p>
+  <h2 class="disp dlg rv d1" style="text-align:center;max-width:580px;margin:0 auto 56px;">Built different.<br/>By design.</h2>
+  <div class="rv d2">
+    <table class="ctable">
+      <thead>
+        <tr>
+          <th style="width:220px;color:rgba(255,255,255,0.5);">Feature</th>
+          <th>Chrome &amp; Edge</th>
+          <th>Brave &amp; Arc</th>
+          <th class="hcol">✦ Slate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Goal-native agent</td><td class="cx">—</td><td class="cx">—</td><td class="ck htd">✓</td></tr>
+        <tr><td>Fully local AI model</td><td class="cx">—</td><td class="cp">Partial</td><td class="ck htd">✓</td></tr>
+        <tr><td>Spaces with AI context</td><td class="cx">—</td><td class="cp">Basic</td><td class="ck htd">✓</td></tr>
+        <tr><td>Timed permission grants</td><td class="cx">—</td><td class="cx">—</td><td class="ck htd">✓</td></tr>
+        <tr><td>Three adaptive modes</td><td class="cx">—</td><td class="cx">—</td><td class="ck htd">✓</td></tr>
+        <tr><td>⌘K Command palette</td><td class="cx">—</td><td class="cp">Partial</td><td class="ck htd">✓</td></tr>
+        <tr><td>Zero data to cloud</td><td class="cx">—</td><td class="cp">Partial</td><td class="ck htd">✓</td></tr>
+        <tr><td>Live agent task view</td><td class="cx">—</td><td class="cx">—</td><td class="ck htd">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ ROADMAP ═══ -->
+<section id="s12" style="background:rgba(237,234,228,0.97);">
+<div class="ct" style="padding-top:100px;padding-bottom:100px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+    <div>
+      <p class="lbl rv" style="margin-bottom:16px;">Build Status</p>
+      <h2 class="disp dlg rv d1" style="margin-bottom:18px;">Shipping fast.<br/>Built in public.</h2>
+      <p class="blg rv d2" style="margin-bottom:28px;">Prototype is live. Core UI is functional. We're moving fast — and we're looking for the right partners to accelerate from here.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;" class="rv d3">
+        <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--green);"><div class="rst-d" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div>Shipped</div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--elec);"><div class="rst-a" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div>Building</div>
+        <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--s600);"><div class="rst-s" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--s200);"></div>Next</div>
+      </div>
+    </div>
+    <div class="rv d2">
+      <div class="rmrow"><div class="rmst rst-d"></div><span class="rmlbl">Spaces — create, delete, switch</span><span class="rmtag tship">Shipped</span></div>
+      <div class="rmrow"><div class="rmst rst-d"></div><span class="rmlbl">Tab management + Split view</span><span class="rmtag tship">Shipped</span></div>
+      <div class="rmrow"><div class="rmst rst-d"></div><span class="rmlbl">Command palette (⌘K)</span><span class="rmtag tship">Shipped</span></div>
+      <div class="rmrow"><div class="rmst rst-a"></div><span class="rmlbl">AI integration · Local Qwen model</span><span class="rmtag tbld">Building</span></div>
+      <div class="rmrow"><div class="rmst rst-a"></div><span class="rmlbl">Permission sliders + 60-min timer</span><span class="rmtag tbld">Building</span></div>
+      <div class="rmrow"><div class="rmst rst-s"></div><span class="rmlbl">Three modes (Focus / Research / Work)</span><span class="rmtag tnxt">Next</span></div>
+      <div class="rmrow" style="margin-bottom:0;"><div class="rmst rst-s"></div><span class="rmlbl">Per-site encrypted notes</span><span class="rmtag tnxt">Next</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CLOSING ═══ -->
+<section class="sdark" id="s13" style="text-align:center;">
+<div class="ct" style="padding-top:120px;padding-bottom:120px;">
+  <img src="./logo.png" alt="Slate" class="closing-logo rv"/>
+  <p class="lbl rv d1" style="color:rgba(255,255,255,0.3);margin-bottom:20px;margin-top:4px;">Slate Automations + Software · 2026</p>
+  <h2 class="disp dxl rv d2" style="color:white;max-width:720px;margin:0 auto 22px;">
+    The web is ready.<br/><em style="color:rgba(255,255,255,0.35);font-style:italic;">Are you?</em>
+  </h2>
+  <p class="blg rv d3" style="color:rgba(255,255,255,0.4);max-width:460px;margin:0 auto;">
+    Slate AI Browser is in active development. Early access and partnership opportunities are open now.
+  </p>
+  <button class="ctabtn rv d4" onclick="this.textContent='✓ Request Sent'">✦ &nbsp;Request Early Access</button>
+  <div style="margin-top:64px;display:flex;gap:28px;justify-content:center;flex-wrap:wrap;" class="rv d5">
+    <span style="font-size:12px;color:rgba(255,255,255,0.2);font-weight:300;">Local AI · No Cloud</span>
+    <span style="color:rgba(255,255,255,0.1);">·</span>
+    <span style="font-size:12px;color:rgba(255,255,255,0.2);font-weight:300;">Privacy by Architecture</span>
+    <span style="color:rgba(255,255,255,0.1);">·</span>
+    <span style="font-size:12px;color:rgba(255,255,255,0.2);font-weight:300;">Goal-native Agent</span>
+    <span style="color:rgba(255,255,255,0.1);">·</span>
+    <span style="font-size:12px;color:rgba(255,255,255,0.2);font-weight:300;">Apache 2.0 · Qwen3.5-0.8B</span>
+  </div>
+</div>
+</section>
+
+<script>
+// ════════════════ PARTICLE SYSTEM ════════════════
+const canvas = document.getElementById('pc');
+const ctx = canvas.getContext('2d');
+let W, H;
+const mouse = { x: -2000, y: -2000 };
+let lastMove = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX; mouse.y = e.clientY;
+  lastMove = Date.now();
+});
+
+class P {
+  constructor() { this.reset(true); }
+  reset(init) {
+    this.x = init ? Math.random() * W : (Math.random() < 0.5 ? -10 : W + 10);
+    this.y = init ? Math.random() * H : Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.sz = Math.random() * 1.8 + 0.4;
+    this.al = Math.random() * 0.3 + 0.05;
+    this.blue = Math.random() < 0.38;
+    this.oa = Math.random() * Math.PI * 2;
+    this.or = 100 + Math.random() * 300;
+    this.os = (0.0015 + Math.random() * 0.0025) * (Math.random() < 0.5 ? 1 : -1);
+    this.ocx = 0.15 + Math.random() * 0.7;
+    this.ocy = 0.15 + Math.random() * 0.7;
+  }
+  update(idle) {
+    if (idle) {
+      this.oa += this.os;
+      const tx = W * this.ocx + Math.cos(this.oa) * this.or;
+      const ty = H * this.ocy + Math.sin(this.oa) * this.or;
+      this.x += (tx - this.x) * 0.012;
+      this.y += (ty - this.y) * 0.012;
+    } else {
+      const dx = mouse.x - this.x, dy = mouse.y - this.y;
+      const d = Math.sqrt(dx*dx + dy*dy) || 1;
+      const f = Math.max(0, (240 - d) / 240) * 0.6;
+      this.vx += (dx/d) * f; this.vy += (dy/d) * f;
+      this.vx *= 0.91; this.vy *= 0.91;
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < -60) this.x = W + 60;
+      if (this.x > W+60) this.x = -60;
+      if (this.y < -60) this.y = H + 60;
+      if (this.y > H+60) this.y = -60;
+    }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.sz, 0, Math.PI*2);
+    ctx.fillStyle = this.blue
+      ? `rgba(0,122,255,${this.al})`
+      : `rgba(154,145,136,${this.al})`;
+    ctx.fill();
+  }
+}
+
+const pts = [];
+for (let i = 0; i < 110; i++) pts.push(new P());
+
+function drawLines() {
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i+1; j < pts.length; j++) {
+      const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 80) {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.strokeStyle = `rgba(0,122,255,${0.035*(1-d/80)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function tick() {
+  ctx.clearRect(0,0,W,H);
+  const idle = Date.now() - lastMove > 700;
+  drawLines();
+  pts.forEach(p => { p.update(idle); p.draw(); });
+  requestAnimationFrame(tick);
+}
+tick();
+
+// ════════════════ SCROLL REVEAL ════════════════
+const rvs = document.querySelectorAll('.rv');
+const ro = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); }), {threshold:0.12});
+rvs.forEach(r => ro.observe(r));
+
+// ════════════════ NAV DOTS ════════════════
+const secs = document.querySelectorAll('section[id]');
+const nd = document.getElementById('navDots');
+secs.forEach((s,i) => {
+  const b = document.createElement('button');
+  b.className='nd'; b.title=`Slide ${i+1}`;
+  b.addEventListener('click', () => s.scrollIntoView({behavior:'smooth'}));
+  nd.appendChild(b);
+});
+const ndo = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = Array.from(secs).indexOf(e.target);
+      document.querySelectorAll('.nd').forEach((d,i) => d.classList.toggle('act', i===idx));
+    }
+  });
+}, {threshold:0.5});
+secs.forEach(s => ndo.observe(s));
+
+// ════════════════ COUNTER ANIMATION ════════════════
+const cnts = document.querySelectorAll('[data-count]');
+const co = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if(e.isIntersecting) {
+      const el = e.target, t = parseInt(el.dataset.count);
+      if(t===0){el.textContent='0';co.unobserve(el);return;}
+      let c=0; const step=t/45;
+      const tm=setInterval(()=>{c=Math.min(c+step,t);el.textContent=Math.round(c);if(c>=t)clearInterval(tm);},28);
+      co.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+cnts.forEach(c=>co.observe(c));
+</script>
+</body>
+</html>
