@@ -1,6 +1,6 @@
 {
   "outputDirectory": ".",
-  "cleanUrls": false,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/promo/:path*",
@@ -8,7 +8,7 @@
     },
     {
       "source": "/promo",
-      "destination": "https://agency-v1-eta.vercel.app/index.html"
+      "destination": "https://agency-v1-eta.vercel.app/"
     }
   ]
 }
