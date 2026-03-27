@@ -1,22 +1,15 @@
-import path from "path";
-import { fileURLToPath } from "url";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite'
+import { resolve } from 'path'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// https://vite.dev/config/
 export default defineConfig({
-  base: "/promo/",
+  base: '/landing-page/',
   build: {
-    outDir: "dist",
-  },
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
-});
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        subpage1: resolve(__dirname, 'slate-pitch-deck_v1.html'),
+        subpage2: resolve(__dirname, 'slate-pitch-deck_v2.html'),
+      }
+    }
+  }
+})

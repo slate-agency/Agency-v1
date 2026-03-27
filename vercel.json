@@ -1,14 +1,12 @@
 {
-  "outputDirectory": ".",
-  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/promo/:path*",
-      "destination": "https://landingpage-v1-eight.vercel.app/promo/:path*"
+      "source": "/landing-page",
+      "destination": "https://landingpage-v1-eight.vercel.app/"
     },
     {
-      "source": "/promo/",
-      "destination": "https://landingpage-v1-eight.vercel.app/promo/index.html"
+      "source": "/landing-page/:path*",
+      "destination": "https://landingpage-v1-eight.vercel.app/:path*"
     }
   ]
 }
