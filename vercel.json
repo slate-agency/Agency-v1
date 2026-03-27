@@ -1,15 +1,14 @@
 {
   "outputDirectory": ".",
+  "cleanUrls": false,
   "rewrites": [
     {
-      "source": "/promo",
-      "destination": "https://agency-v1-eta.vercel.app/index.html",
-      "continue": true
+      "source": "/promo/:path*",
+      "destination": "https://agency-v1-eta.vercel.app/:path*"
     },
     {
-      "source": "/promo/:path*",
-      "destination": "https://agency-v1-eta.vercel.app/index.html/:path*",
-      "continue": true
+      "source": "/promo",
+      "destination": "https://agency-v1-eta.vercel.app/index.html"
     }
   ]
 }
