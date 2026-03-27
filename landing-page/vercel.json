@@ -1,13 +1,3 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/slate-pitch-deck_v1.html",
-      "destination": "/slate-pitch-deck_v1.html"
-    },
-    {
-      "source": "/slate-pitch-deck_v2.html",
-      "destination": "/slate-pitch-deck_v2.html"
-    }
-  ]
+  "cleanUrls": true
 }

@@ -1,12 +1,13 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/landing-page",
-      "destination": "https://landingpage-v1-eight.vercel.app/"
+      "destination": "https://your-landing-page-xyz.vercel.app/"
     },
     {
       "source": "/landing-page/:path*",
-      "destination": "https://landingpage-v1-eight.vercel.app/:path*"
+      "destination": "https://your-landing-page-xyz.vercel.app/:path*"
     }
   ]
 }

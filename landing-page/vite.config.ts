@@ -1,15 +1,10 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
+  plugins: [react()],
   base: '/landing-page/',
-  build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        subpage1: resolve(__dirname, 'slate-pitch-deck_v1.html'),
-        subpage2: resolve(__dirname, 'slate-pitch-deck_v2.html'),
-      }
-    }
-  }
+  // That's it. No rollupOptions needed.
+  // index.html at root = Vite entry point (automatic)
+  // public/ files = copied as-is to dist (automatic)
 })
