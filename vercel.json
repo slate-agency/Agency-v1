@@ -1,5 +1,6 @@
 {
   "outputDirectory": ".",
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/promo/:path*",
