@@ -3,11 +3,13 @@
   "rewrites": [
     {
       "source": "/promo",
-      "destination": "https://agency-v1-eta.vercel.app/"
+      "destination": "https://agency-v1-eta.vercel.app/",
+      "continue": true
     },
     {
       "source": "/promo/:path*",
-      "destination": "https://agency-v1-eta.vercel.app/:path*"
+      "destination": "https://agency-v1-eta.vercel.app/:path*",
+      "continue": true
     }
   ]
 }
