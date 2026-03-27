@@ -7,8 +7,8 @@
       "destination": "https://landingpage-v1-eight.vercel.app/:path*"
     },
     {
-      "source": "/promo",
-      "destination": "https://landingpage-v1-eight.vercel.app/"
+      "source": "/promo/",
+      "destination": "https://landingpage-v1-eight.vercel.app/index.html"
     }
   ]
 }
