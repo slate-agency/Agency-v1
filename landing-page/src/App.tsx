@@ -79,7 +79,7 @@ export default function App() {
         <div className="flex items-center gap-2.5">
           {/* Browser icon mark */}
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm overflow-hidden">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <img src="logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-[15px] font-semibold tracking-tight text-gray-900">
             Schesende
