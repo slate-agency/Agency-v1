@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Slate — The AI-Native Browser</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --blue: #0A84FF;
+    --indigo: #5E5CE6;
+    --purple: #BF5AF2;
+    --teal: #32D74B;
+    --orange: #FF9F0A;
+    --red: #FF453A;
+    --bg: #F5F5F7;
+    --card: rgba(255,255,255,0.72);
+    --card-border: rgba(0,0,0,0.08);
+    --text: #1D1D1F;
+    --text2: #6E6E73;
+    --text3: #AEAEB2;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* PARTICLE CANVAS */
+  #particle-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+  }
+
+  /* GLASS CARD */
+  .glass {
+    background: var(--card);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+
+  /* TYPOGRAPHY */
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+  }
+
+  h1 { font-size: clamp(48px, 7vw, 96px); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; }
+  h2 { font-size: clamp(36px, 5vw, 64px); font-weight: 700; line-height: 1.1; letter-spacing: -0.025em; }
+  h3 { font-size: clamp(22px, 3vw, 32px); font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #0A84FF 0%, #5E5CE6 50%, #BF5AF2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    color: var(--text2);
+    line-height: 1.5;
+    max-width: 640px;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 1100px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1100px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; max-width: 1100px; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* FEATURE CARD */
+  .feat-card {
+    padding: 32px;
+    border-radius: 20px;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+    cursor: default;
+  }
+  .feat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+  }
+
+  .feat-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  /* PILL BADGE */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(10,132,255,0.1);
+    color: var(--blue);
+    border: 1px solid rgba(10,132,255,0.2);
+  }
+
+  /* BROWSER MOCKUP */
+  .browser-mock {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .browser-mock:hover { transform: scale(1.02) translateY(-6px); }
+
+  /* COMPARISON TABLE */
+  .comp-table { width: 100%; max-width: 1000px; border-collapse: collapse; }
+  .comp-table th, .comp-table td {
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .comp-table th { font-weight: 700; font-size: 13px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .comp-table td:first-child { text-align: left; font-weight: 600; }
+  .comp-table tr:hover td { background: rgba(10,132,255,0.04); }
+  .check { color: #32D74B; font-size: 18px; }
+  .cross { color: #FF453A; font-size: 18px; }
+  .partial { color: #FF9F0A; font-size: 18px; }
+  .slate-col { background: rgba(10,132,255,0.06); font-weight: 700; color: var(--blue); }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 600px; }
+  .tl-item { display: flex; gap: 20px; padding: 16px 0; position: relative; }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--blue); margin-top: 6px; flex-shrink: 0; position: relative; z-index: 1; }
+  .tl-line { position: absolute; left: 5px; top: 28px; bottom: -16px; width: 2px; background: linear-gradient(to bottom, var(--blue), transparent); }
+
+  /* PERMISSION SLIDER */
+  .perm-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 10px;
+    transition: background 0.2s;
+  }
+  .perm-row:hover { background: rgba(255,255,255,0.9); }
+  .toggle {
+    width: 44px; height: 26px;
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .toggle.on { background: var(--teal); }
+  .toggle.off { background: #D1D1D6; }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: white;
+    top: 2px;
+    transition: left 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 20px; }
+  .toggle.off::after { left: 2px; }
+
+  /* TIMER BADGE */
+  .timer-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255,159,10,0.12);
+    color: var(--orange);
+    font-size: 12px; font-weight: 600;
+    border: 1px solid rgba(255,159,10,0.2);
+  }
+
+  /* AGENT STATUS */
+  .agent-status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    background: rgba(50,215,75,0.08);
+    border: 1px solid rgba(50,215,75,0.2);
+    margin-bottom: 10px;
+  }
+  .agent-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+
+  /* MODE CARDS */
+  .mode-card {
+    padding: 28px;
+    border-radius: 20px;
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+  }
+  .mode-card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 30px 70px rgba(0,0,0,0.14); }
+  .mode-emoji { font-size: 48px; margin-bottom: 16px; display: block; }
+
+  /* COMMAND PALETTE */
+  .cmd-palette {
+    width: 100%; max-width: 600px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+  }
+  .cmd-input {
+    display: flex; align-items: center; gap: 12px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .cmd-result {
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .cmd-result:hover, .cmd-result.active { background: rgba(10,132,255,0.08); }
+  .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* ROADMAP */
+  .roadmap-item {
+    padding: 24px 28px;
+    border-radius: 16px;
+    border-left: 4px solid;
+    transition: transform 0.3s ease;
+  }
+  .roadmap-item:hover { transform: translateX(8px); }
+
+  /* HERO SECTION */
+  #hero { background: transparent; text-align: center; gap: 32px; }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text3);
+    font-size: 12px;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* SECTION HEADER */
+  .section-header { text-align: center; margin-bottom: 60px; }
+
+  /* STAT CARD */
+  .stat-card {
+    padding: 32px;
+    border-radius: 20px;
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .stat-card:hover { transform: translateY(-8px) scale(1.03); }
+  .stat-num { font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .stat-label { font-size: 14px; color: var(--text2); margin-top: 8px; font-weight: 500; }
+
+  /* TECH STACK */
+  .tech-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-size: 14px; font-weight: 600;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(0,0,0,0.08);
+    margin: 6px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tech-pill:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+  /* CTA */
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 18px 40px;
+    border-radius: 100px;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    text-decoration: none;
+  }
+  .cta-primary {
+    background: linear-gradient(135deg, #0A84FF, #5E5CE6);
+    color: white;
+    box-shadow: 0 8px 32px rgba(10,132,255,0.4);
+  }
+  .cta-primary:hover { transform: scale(1.06) translateY(-3px); box-shadow: 0 16px 48px rgba(10,132,255,0.5); }
+  .cta-secondary {
+    background: rgba(255,255,255,0.8);
+    color: var(--text);
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .cta-secondary:hover { transform: scale(1.04) translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+  /* ANIMATE IN */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--indigo));
+    animation: progress 2s ease-in-out infinite alternate;
+  }
+  @keyframes progress { from{width:30%} to{width:85%} }
+
+  /* NOTES MOCKUP */
+  .note-card {
+    padding: 20px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(0,0,0,0.06);
+    margin-bottom: 12px;
+    transition: transform 0.2s;
+  }
+  .note-card:hover { transform: translateX(6px); }
+
+  /* SPLIT VIEW */
+  .split-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .split-pane {
+    background: rgba(255,255,255,0.9);
+    padding: 20px;
+    min-height: 200px;
+  }
+
+  /* SPACE SIDEBAR */
+  .space-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 14px; font-weight: 500;
+  }
+  .space-item:hover { background: rgba(10,132,255,0.08); }
+  .space-item.active { background: rgba(10,132,255,0.12); color: var(--blue); }
+  .space-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* DIVIDER */
+  .divider { width: 60px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--blue), var(--indigo)); margin: 20px auto; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(245,245,247,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+  .nav-logo img { width: 32px; height: 32px; border-radius: 8px; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--blue); }
+
+  /* SECTION BG ACCENTS */
+  .bg-accent {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  /* SHORTCUT KEY */
+  .kbd {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.1);
+    font-size: 13px; font-weight: 600;
+    font-family: monospace;
+    color: var(--text);
+  }
+
+  /* PRIVACY METER */
+  .privacy-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--teal) 0% 92%, rgba(0,0,0,0.08) 92% 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    margin: 0 auto 16px;
+  }
+  .privacy-ring::before {
+    content: '';
+    position: absolute;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: white;
+  }
+  .privacy-ring-text { position: relative; z-index: 1; font-size: 22px; font-weight: 800; color: var(--teal); }
+
+  /* FLOATING BADGE */
+  .float-badge {
+    position: absolute;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 13px; font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  /* SECTION COLORS */
+  .s-hero { }
+  .s-problem { background: transparent; }
+  .s-spaces { background: transparent; }
+  .s-tabs { background: transparent; }
+  .s-ai { background: transparent; }
+  .s-command { background: transparent; }
+  .s-modes { background: transparent; }
+  .s-agent { background: transparent; }
+  .s-permissions { background: transparent; }
+  .s-notes { background: transparent; }
+  .s-privacy { background: transparent; }
+  .s-compare { background: transparent; }
+  .s-tech { background: transparent; }
+  .s-roadmap { background: transparent; }
+  .s-cta { background: transparent; }
+</style>
+</head>
+<body>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="https://cdn.abacus.ai/images/888387c5-895c-444d-b5f5-7de131b1bff8.png" alt="Slate"/>
+    <span>Slate</span>
+  </div>
+  <div class="nav-links">
+    <a href="#hero">Home</a>
+    <a href="#spaces">Spaces</a>
+    <a href="#ai">AI</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <div class="pill">🚀 Early Access</div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="hero" class="s-hero" style="padding-top:120px;">
+  <div class="bg-accent" style="width:600px;height:600px;background:#0A84FF;top:-200px;left:-200px;"></div>
+  <div class="bg-accent" style="width:500px;height:500px;background:#BF5AF2;bottom:-100px;right:-100px;"></div>
+
+  <div class="fade-up" style="text-align:center;max-width:900px;">
+    <img src="https://cdn.abacus.ai/images/888387c5-895c-444d-b5f5-7de131b1bff8.png" alt="Slate" style="width:100px;height:100px;border-radius:24px;margin-bottom:32px;box-shadow:0 20px 60px rgba(0,0,0,0.2);"/>
+    <div class="eyebrow">Introducing Slate</div>
+    <h1>The Browser That<br/><span class="gradient-text">Thinks With You</span></h1>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:24px;">An AI-native, privacy-first browser built on Firefox/Gecko. Local intelligence. Zero cloud dependency. Total control.</p>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:40px;flex-wrap:wrap;">
+      <a href="#spaces" class="cta-btn cta-primary">Explore Features ↓</a>
+      <a href="#compare" class="cta-btn cta-secondary">See Comparison</a>
+    </div>
+    <div style="display:flex;gap:24px;justify-content:center;margin-top:48px;flex-wrap:wrap;">
+      <div class="pill">🦊 Firefox/Gecko Engine</div>
+      <div class="pill">🔒 100% Local AI</div>
+      <div class="pill">⚡ MV3-Proof Adblock</div>
+      <div class="pill">🖥️ macOS · Windows · Linux</div>
+    </div>
+  </div>
+
+  <div class="fade-up" style="margin-top:60px;width:100%;max-width:960px;">
+    <img src="https://cdn.abacus.ai/images/91168e34-54b3-4bde-bab4-9c7981191e8d.png" alt="Slate Browser" class="browser-mock"/>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M5 11l5 5 5-5" stroke="#AEAEB2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PROBLEM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="problem" class="s-problem">
+  <div class="bg-accent" style="width:400px;height:400px;background:#FF453A;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">The Problem</div>
+    <h2>Browsers Are <span class="gradient-text">Broken</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Every browser today forces a compromise. Slate refuses to.</p>
+  </div>
+  <div class="grid-4 fade-up">
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(255,69,58,0.1);">🕵️</div>
+      <h3 style="font-size:18px;margin-bottom:10px;">You're the Product</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Chrome, Edge, and Opera harvest your data. Your browsing history funds their ad empires.</p>
+    </div>
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(255,159,10,0.1);">🚫</div>
+      <h3 style="font-size:18px;margin-bottom:10px;">Adblock is Dying</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Google's Manifest V3 is killing uBlock Origin on Chrome. Brave and Edge can't escape it either.</p>
+    </div>
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(94,92,230,0.1);">🤖</div>
+      <h3 style="font-size:18px;margin-bottom:10px;">AI is Just a Sidebar</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Copilot, Aria, Leo — all bolted-on chat windows. None of them actually browse for you.</p>
+    </div>
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(191,90,242,0.1);">🌩️</div>
+      <h3 style="font-size:18px;margin-bottom:10px;">Cloud = No Control</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Every AI browser sends your content to remote servers. You have no idea what happens to it.</p>
+    </div>
+  </div>
+  <div class="fade-up" style="margin-top:48px;text-align:center;">
+    <div class="glass" style="display:inline-block;padding:24px 48px;border-radius:20px;">
+      <p style="font-size:22px;font-weight:700;letter-spacing:-0.02em;">Slate solves all four. <span class="gradient-text">At once.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPACES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="spaces" class="s-spaces">
+  <div class="bg-accent" style="width:500px;height:500px;background:#5E5CE6;top:0;right:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Workspaces</div>
+    <h2>Spaces — <span class="gradient-text">Your Web, Organized</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Topic-based workspaces that contain tabs, notes, agent runs, and memory. Create and delete spaces instantly.</p>
+  </div>
+  <div class="grid-2 fade-up" style="align-items:start;">
+    <div class="glass" style="padding:32px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:20px;">SPACES</div>
+      <div class="space-item active">
+        <div class="space-dot" style="background:#0A84FF;"></div>
+        <span>Research</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">5 tabs</span>
+      </div>
+      <div class="space-item">
+        <div class="space-dot" style="background:#FF9F0A;"></div>
+        <span>Music</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">0 tabs</span>
+      </div>
+      <div class="space-item">
+        <div class="space-dot" style="background:#32D74B;"></div>
+        <span>Games</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">0 tabs</span>
+      </div>
+      <div class="space-item">
+        <div class="space-dot" style="background:#BF5AF2;"></div>
+        <span>Images</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">0 tabs</span>
+      </div>
+      <div class="space-item">
+        <div class="space-dot" style="background:#FF453A;"></div>
+        <span>Work</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3);">0 tabs</span>
+      </div>
+      <div style="margin-top:16px;padding:10px 14px;border-radius:10px;border:1.5px dashed rgba(10,132,255,0.3);text-align:center;font-size:13px;color:var(--blue);cursor:pointer;font-weight:600;">+ New Space</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(10,132,255,0.1);">📁</div>
+        <h3 style="font-size:18px;margin-bottom:8px;">Topic-Based Workspaces</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6;">Each space holds its own tabs, notes, agent runs, and browsing history. Completely isolated.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(50,215,75,0.1);">🗂️</div>
+        <h3 style="font-size:18px;margin-bottom:8px;">Auto Tab Clustering</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6;">AI automatically clusters tabs by topic within each space. Lock or merge clusters with one click.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(191,90,242,0.1);">📦</div>
+        <h3 style="font-size:18px;margin-bottom:8px;">Snapshots & Archives</h3>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6;">Compress a space into a summary document, close all tabs, and revive it later with one click.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TABS & SPLIT VIEW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="tabs" class="s-tabs">
+  <div class="bg-accent" style="width:400px;height:400px;background:#32D74B;bottom:0;left:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Tabs & Layout</div>
+    <h2>Tabs That <span class="gradient-text">Work For You</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Fully customizable tabs with split-view for side-by-side browsing. Compare, research, and work in parallel.</p>
+  </div>
+  <div class="fade-up" style="width:100%;max-width:900px;">
+    <div class="glass" style="padding:20px;">
+      <!-- Tab bar -->
+      <div style="display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);font-size:13px;font-weight:600;color:var(--blue);white-space:nowrap;">
+          🌐 google.com <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.06);">Other</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.6);font-size:13px;font-weight:500;white-space:nowrap;">
+          📄 arXiv: Attention Is All... <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(10,132,255,0.1);color:var(--blue);">AI</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.6);font-size:13px;font-weight:500;white-space:nowrap;">
+          🐙 GitHub <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(50,215,75,0.1);color:var(--teal);">Dev</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.6);font-size:13px;font-weight:500;white-space:nowrap;">
+          📐 Figma <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(191,90,242,0.1);color:var(--purple);">Design</span>
+        </div>
+        <div style="padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.4);font-size:16px;cursor:pointer;">+</div>
+      </div>
+      <!-- Split view -->
+      <div class="split-view">
+        <div class="split-pane">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:12px;">PANE 1 — arXiv Paper</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:8px;">Attention Is All You Need</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;">The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...</div>
+          <div style="margin-top:12px;padding:10px;border-radius:8px;background:rgba(10,132,255,0.06);border:1px solid rgba(10,132,255,0.1);">
+            <div style="font-size:12px;font-weight:600;color:var(--blue);">✦ AI Summary</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px;">Introduces the Transformer architecture using self-attention mechanisms...</div>
+          </div>
+        </div>
+        <div class="split-pane" style="border-left:3px solid rgba(10,132,255,0.2);">
+          <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:12px;">PANE 2 — GitHub Repo</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:8px;">tensorflow/tensor2tensor</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;">Library of deep learning models and datasets designed to make deep learning more accessible...</div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <span style="font-size:12px;padding:4px 10px;border-radius:6px;background:rgba(50,215,75,0.1);color:var(--teal);font-weight:600;">⭐ 15.2k</span>
+            <span style="font-size:12px;padding:4px 10px;border-radius:6px;background:rgba(255,159,10,0.1);color:var(--orange);font-weight:600;">🍴 3.4k</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-3 fade-up" style="margin-top:32px;">
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">⇄</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Split Tab View</h3>
+      <p style="font-size:13px;color:var(--text2);">Browse two pages side by side. Compare, research, and reference simultaneously.</p>
+    </div>
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">🏷️</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Smart Tab Labels</h3>
+      <p style="font-size:13px;color:var(--text2);">AI auto-labels tabs by category: AI, Dev, Design, Research, Shopping, and more.</p>
+    </div>
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">🔄</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Fully Customizable</h3>
+      <p style="font-size:13px;color:var(--text2);">Rearrange, rename, pin, and group tabs. Your workflow, your rules.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- AI FEATURES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="ai" class="s-ai">
+  <div class="bg-accent" style="width:500px;height:500px;background:#BF5AF2;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Local AI</div>
+    <h2>AI That Lives <span class="gradient-text">On Your Device</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Qwen3.5-0.8B runs entirely on your hardware. No API keys. No cloud. No data leaves your machine.</p>
+  </div>
+  <div class="grid-2 fade-up" style="align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- AI Toolbar mockup -->
+      <div class="glass" style="padding:20px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.08em;">AI Toolbar</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;">📝 Summarize</button>
+          <button style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;background:rgba(94,92,230,0.1);border:1px solid rgba(94,92,230,0.2);color:var(--indigo);font-size:14px;font-weight:600;cursor:pointer;">💡 Explain</button>
+          <button style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;background:linear-gradient(135deg,rgba(10,132,255,0.15),rgba(191,90,242,0.15));border:1px solid rgba(10,132,255,0.2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;">✦ AI</button>
+        </div>
+        <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(10,132,255,0.04);border:1px solid rgba(10,132,255,0.1);">
+          <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;">✦ AI Summary — local model</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;">This page covers the Transformer architecture — key topics: self-attention, multi-head attention, positional encoding. Open the AI panel for deeper analysis.</div>
+        </div>
+      </div>
+      <!-- Shortcut -->
+      <div class="glass" style="padding:20px;display:flex;align-items:center;gap:16px;">
+        <div style="font-size:32px;">⌨️</div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px;">Quick AI Access</div>
+          <div style="font-size:13px;color:var(--text2);">Wake the AI instantly with <span class="kbd">⌘K</span> or click the AI button in the toolbar.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(10,132,255,0.1);">📝</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Summarize Any Page</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">One click. Instant summary of any article, paper, or page — extracted from the accessibility tree, not raw HTML.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(94,92,230,0.1);">💡</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Explain Anything</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Highlight text, click Explain. Jargon, code, legal text — simplified instantly in plain language.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(191,90,242,0.1);">🌐</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Translate & Simplify</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Translate pages, simplify complex content, and highlight key points — all on-device.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(50,215,75,0.1);">🛡️</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Safety Assistant</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Phishing detection, scam warnings, fake review analysis, and low-credibility site signals.</p>
+      </div>
+    </div>
+  </div>
+  <!-- Model stats -->
+  <div class="grid-4 fade-up" style="margin-top:40px;">
+    <div class="stat-card glass">
+      <div class="stat-num gradient-text">0.8B</div>
+      <div class="stat-label">Parameters — Qwen3.5</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num gradient-text">262K</div>
+      <div class="stat-label">Context Window Tokens</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num gradient-text">0.55</div>
+      <div class="stat-label">GB Model Size (Q4)</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-num gradient-text">100%</div>
+      <div class="stat-label">Local — Zero Cloud</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- COMMAND PALETTE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="command" class="s-command">
+  <div class="bg-accent" style="width:400px;height:400px;background:#0A84FF;top:0;right:0;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Command Palette</div>
+    <h2>One Shortcut. <span class="gradient-text">Infinite Power.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Press <span class="kbd">⌘K</span> anywhere. Type in natural language. Slate does the rest.</p>
+  </div>
+  <div class="fade-up" style="width:100%;max-width:680px;">
+    <div class="cmd-palette glass">
+      <div class="cmd-input">
+        <span style="font-size:18px;">⌘</span>
+        <span style="font-size:15px;font-weight:500;color:var(--text2);">Summarize all tabs in this space...</span>
+        <span style="margin-left:auto;" class="kbd">⌘K</span>
+      </div>
+      <div style="padding:8px 0;background:rgba(255,255,255,0.9);">
+        <div class="cmd-result active">
+          <div class="cmd-result-icon" style="background:rgba(10,132,255,0.1);">📝</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">Summarize all tabs in this space</div>
+            <div style="font-size:12px;color:var(--text3);">AI Action — local model</div>
+          </div>
+        </div>
+        <div class="cmd-result">
+          <div class="cmd-result-icon" style="background:rgba(94,92,230,0.1);">🔍</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">Research: AI browser architectures</div>
+            <div style="font-size:12px;color:var(--text3);">Agent Task — opens new space</div>
+          </div>
+        </div>
+        <div class="cmd-result">
+          <div class="cmd-result-icon" style="background:rgba(50,215,75,0.1);">🧹</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">Clean up this space</div>
+            <div style="font-size:12px;color:var(--text3);">Deduplicate, cluster, summarize</div>
+          </div>
+        </div>
+        <div class="cmd-result">
+          <div class="cmd-result-icon" style="background:rgba(255,159,10,0.1);">📊</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">Compare prices for this product</div>
+            <div style="font-size:12px;color:var(--text3);">Shopping Agent — multi-site</div>
+          </div>
+        </div>
+        <div class="cmd-result">
+          <div class="cmd-result-icon" style="background:rgba(191,90,242,0.1);">🌐</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">Translate this page to English</div>
+            <div style="font-size:12px;color:var(--text3);">AI Action — instant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-3 fade-up" style="margin-top:40px;">
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">🗣️</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Natural Language</h3>
+      <p style="font-size:13px;color:var(--text2);">Type goals, not commands. "Research X and give me a brief" just works.</p>
+    </div>
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">⚡</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">Instant Access</h3>
+      <p style="font-size:13px;color:var(--text2);"><span class="kbd">⌘K</span> from anywhere in the browser. No mouse required.</p>
+    </div>
+    <div class="feat-card glass" style="text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">🔧</div>
+      <h3 style="font-size:16px;margin-bottom:8px;">All Commands</h3>
+      <p style="font-size:13px;color:var(--text2);">Every browser action, AI task, and agent workflow accessible from one place.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- THREE MODES -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="modes" class="s-modes">
+  <div class="bg-accent" style="width:500px;height:500px;background:#FF9F0A;bottom:0;right:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Adaptive Modes</div>
+    <h2>Three Modes. <span class="gradient-text">One Browser.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Slate adapts to what you're doing. Switch modes and the entire browser reconfigures itself.</p>
+  </div>
+  <div class="grid-3 fade-up">
+    <div class="mode-card glass">
+      <span class="mode-emoji">🎯</span>
+      <div style="display:inline-block;padding:4px 12px;border-radius:100px;background:rgba(10,132,255,0.1);color:var(--blue);font-size:12px;font-weight:700;margin-bottom:16px;">FOCUS</div>
+      <h3 style="font-size:20px;margin-bottom:12px;">Deep Focus</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Minimal UI. Social feeds blocked. Autoplay disabled. Notifications silenced. Just you and the work.</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;text-align:left;">
+        <div style="font-size:13px;color:var(--text2);">✓ Distraction blocking</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Minimal chrome UI</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Notification suppression</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Autoplay disabled</div>
+      </div>
+    </div>
+    <div class="mode-card glass" style="border:2px solid rgba(94,92,230,0.3);transform:scale(1.04);">
+      <span class="mode-emoji">🔬</span>
+      <div style="display:inline-block;padding:4px 12px;border-radius:100px;background:rgba(94,92,230,0.1);color:var(--indigo);font-size:12px;font-weight:700;margin-bottom:16px;">RESEARCH</div>
+      <h3 style="font-size:20px;margin-bottom:12px;">Deep Research</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Sources sidebar. Notes panel. Cross-tab Q&A. Multi-page summarization. Your research hub.</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;text-align:left;">
+        <div style="font-size:13px;color:var(--text2);">✓ Sources sidebar</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Notes panel</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Cross-tab Q&A</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Multi-page summarization</div>
+      </div>
+    </div>
+    <div class="mode-card glass">
+      <span class="mode-emoji">💼</span>
+      <div style="display:inline-block;padding:4px 12px;border-radius:100px;background:rgba(50,215,75,0.1);color:var(--teal);font-size:12px;font-weight:700;margin-bottom:16px;">WORK</div>
+      <h3 style="font-size:20px;margin-bottom:12px;">Work Mode</h3>
+      <p style="font-size:14px;color:var(--text2);line-height:1.6;">Agent task panel. Live status. Completed tasks. Integration hooks for mail and calendar via web UIs.</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;text-align:left;">
+        <div style="font-size:13px;color:var(--text2);">✓ Agent task panel</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Live task status</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Completed task log</div>
+        <div style="font-size:13px;color:var(--text2);">✓ Automation recipes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- AGENT SYSTEM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="agent" class="s-agent">
+  <div class="bg-accent" style="width:450px;height:450px;background:#5E5CE6;top:0;left:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Agentic Browsing</div>
+    <h2>Give Goals. <span class="gradient-text">Not Instructions.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Slate's agent reads, plans, and acts across the web — with your permission, on your device, with full transparency.</p>
+  </div>
+  <div class="grid-2 fade-up" style="align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <!-- Agent Status -->
+      <div class="glass" style="padding:24px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">AGENT PLAN</div>
+        <div style="padding:14px;border-radius:10px;background:rgba(10,132,255,0.06);border:1px solid rgba(10,132,255,0.1);margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:6px;">Goal: "Research AI browser architectures and give me a brief"</div>
+        </div>
+        <div class="agent-status">
+          <div class="agent-dot"></div>
+          <div style="font-size:13px;font-weight:600;">Step 1 of 4 — Searching sources</div>
+          <div class="timer-badge" style="margin-left:auto;">⏱ 2s</div>
+        </div>
+        <div style="padding:10px 14px;border-radius:10px;background:rgba(50,215,75,0.06);border:1px solid rgba(50,215,75,0.15);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+          <span style="color:var(--teal);">✓</span>
+          <span style="font-size:13px;">Step 2 — Opened 5 sources, extracted content</span>
+        </div>
+        <div style="padding:10px 14px;border-radius:10px;background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.06);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+          <span style="color:var(--text3);">○</span>
+          <span style="font-size:13px;color:var(--text3);">Step 3 — Synthesize findings</span>
+        </div>
+        <div style="padding:10px 14px;border-radius:10px;background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;gap:10px;">
+          <span style="color:var(--text3);">○</span>
+          <span style="font-size:13px;color:var(--text3);">Step 4 — Present brief in new space</span>
+        </div>
+        <div class="progress-bar" style="margin-top:16px;"><div class="progress-fill" style="width:45%;animation:none;"></div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(10,132,255,0.1);">🎯</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Goal-Based Browsing</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Type a goal. Slate searches, reads, compares, and synthesizes across multiple sites — then presents results.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(50,215,75,0.1);">📋</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Plan Preview</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Before any complex task runs, Slate shows you exactly what it will do. Approve, modify, or cancel.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(255,159,10,0.1);">📜</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Full Action Log</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Every URL visited, every click, every form filled — logged locally. Replayable and auditable.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(191,90,242,0.1);">🔧</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Workflow Automation</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Price tracking, research briefs, travel planning, form filling — all via natural language commands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PERMISSIONS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="permissions" class="s-permissions">
+  <div class="bg-accent" style="width:400px;height:400px;background:#32D74B;top:50%;right:-100px;transform:translateY(-50%);"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Capability System</div>
+    <h2>You Control <span class="gradient-text">Everything.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Every agent capability requires explicit permission. Granular, time-limited, and always visible.</p>
+  </div>
+  <div class="grid-2 fade-up" style="align-items:start;">
+    <div class="glass" style="padding:28px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px;">AGENT PERMISSIONS</div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Read current tab DOM</div>
+          <div style="font-size:12px;color:var(--text3);">Accessibility tree only — no raw HTML</div>
+        </div>
+        <div class="toggle on"></div>
+      </div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Navigate to URLs</div>
+          <div style="font-size:12px;color:var(--text3);">Open new tabs in current space</div>
+        </div>
+        <div class="toggle on"></div>
+      </div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Fill forms on approved domains</div>
+          <div style="font-size:12px;color:var(--text3);">amazon.com, booking.com only</div>
+        </div>
+        <div class="toggle on"></div>
+      </div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Access other containers</div>
+          <div style="font-size:12px;color:var(--text3);">Work, Personal, Anonymous</div>
+        </div>
+        <div class="toggle off"></div>
+      </div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Microphone / Camera</div>
+          <div style="font-size:12px;color:var(--text3);">Hardware access</div>
+        </div>
+        <div class="toggle off"></div>
+      </div>
+      <div class="perm-row">
+        <div>
+          <div style="font-weight:600;font-size:14px;">Send data to cloud</div>
+          <div style="font-size:12px;color:var(--text3);">Optional — off by default</div>
+        </div>
+        <div class="toggle off"></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(50,215,75,0.1);">🔐</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Capability-Based Security</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Each agent tool declares exactly what it needs. Nothing is granted by default. You approve each capability.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(10,132,255,0.1);">⏱️</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Time-Limited Grants</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Permissions expire automatically. Grant access for "this session" or "this task" — never permanently.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(191,90,242,0.1);">🏷️</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Container Scoping</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Agent tasks run inside a specific container. Work agent can't touch Personal data. Ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- NOTES & RESEARCH -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="notes" class="s-notes">
+  <div class="bg-accent" style="width:450px;height:450px;background:#FF9F0A;bottom:0;left:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Research Hub</div>
+    <h2>Notes, Links & <span class="gradient-text">Context — Persistent.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Every space remembers your notes, sources, and agent findings. Come back tomorrow — it's all still there.</p>
+  </div>
+  <div class="grid-2 fade-up" style="align-items:start;">
+    <div class="glass" style="padding:28px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:20px;">NOTES — Research Space</div>
+      <div class="note-card">
+        <div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;">Constitutional AI</div>
+        <div style="font-size:13px;color:var(--text2);">Anthropic's approach to training AI systems to be helpful, harmless, and honest using a set of principles...</div>
+      </div>
+      <div class="note-card">
+        <div style="font-size:12px;font-weight:600;color:var(--indigo);margin-bottom:6px;">Interpretability</div>
+        <div style="font-size:13px;color:var(--text2);">Methods for understanding what's happening inside neural networks. Key papers: circuits, superposition...</div>
+      </div>
+      <div class="note-card">
+        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:6px;">Scalable Oversight</div>
+        <div style="font-size:13px;color:var(--text2);">How to supervise AI systems that are more capable than humans at specific tasks...</div>
+      </div>
+      <div style="margin-top:16px;font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">LINKS</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--blue);cursor:pointer;">📄 arXiv paper ↗</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--blue);cursor:pointer;">💻 GitHub code ↗</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(10,132,255,0.1);">📝</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Persistent Notes</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Notes live inside each space. Add them manually or let the AI extract key points from pages automatically.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(94,92,230,0.1);">🔗</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Source Tracking</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Every note links back to its source. Never lose where a piece of information came from.</p>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon" style="background:rgba(50,215,75,0.1);">🧠</div>
+        <h3 style="font-size:17px;margin-bottom:8px;">Cross-Tab Q&A</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Ask questions across all open tabs in a space. "What do these 5 papers agree on?" — answered instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PRIVACY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="privacy" class="s-privacy">
+  <div class="bg-accent" style="width:500px;height:500px;background:#0A84FF;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Privacy Architecture</div>
+    <h2>Privacy by <span class="gradient-text">Architecture.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Not a setting. Not a toggle. Privacy is baked into every layer of Slate — from the engine to the AI.</p>
+  </div>
+  <div class="grid-4 fade-up">
+    <div class="stat-card glass">
+      <div class="privacy-ring"><span class="privacy-ring-text">92%</span></div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Fingerprint Reduction</div>
+      <div class="stat-label">Firefox 145+ anti-fingerprinting</div>
+    </div>
+    <div class="stat-card glass">
+      <div style="font-size:48px;margin-bottom:12px;">🦊</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Firefox/Gecko Engine</div>
+      <div class="stat-label">MV2 + MV3 — uBlock Origin at full power</div>
+    </div>
+    <div class="stat-card glass">
+      <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Local-First AI</div>
+      <div class="stat-label">Qwen3.5-0.8B — zero data leaves device</div>
+    </div>
+    <div class="stat-card glass">
+      <div style="font-size:48px;margin-bottom:12px;">🧱</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Container Isolation</div>
+      <div class="stat-label">Work · Personal · Anonymous — hard walls</div>
+    </div>
+  </div>
+  <div class="grid-3 fade-up" style="margin-top:32px;">
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(50,215,75,0.1);">🛡️</div>
+      <h3 style="font-size:17px;margin-bottom:8px;">Native Ad/Tracker Blocker</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;">Built into the network stack. EasyList-compatible. CNAME uncloaking. Cosmetic filtering. No MV3 limits.</p>
+    </div>
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(10,132,255,0.1);">🔐</div>
+      <h3 style="font-size:17px;margin-bottom:8px;">E2E Encrypted Sync</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;">Spaces, notes, and memory sync across devices with zero-knowledge encryption. We can't read your data.</p>
+    </div>
+    <div class="feat-card glass">
+      <div class="feat-icon" style="background:rgba(191,90,242,0.1);">☁️</div>
+      <h3 style="font-size:17px;margin-bottom:8px;">Opt-In Cloud Only</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;">Cloud AI is never automatic. Per-task consent: which provider, what data, how long, training opt-out.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- COMPARISON -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="compare" class="s-compare">
+  <div class="bg-accent" style="width:400px;height:400px;background:#BF5AF2;top:0;right:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Competitive Landscape</div>
+    <h2>Slate vs <span class="gradient-text">Everyone Else</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">No other browser combines all five pillars. Slate does.</p>
+  </div>
+  <div class="fade-up" style="width:100%;max-width:1000px;overflow-x:auto;">
+    <div class="glass" style="padding:8px;border-radius:20px;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Feature</th>
+            <th class="slate-col">Slate</th>
+            <th>Chrome</th>
+            <th>Brave</th>
+            <th>Arc</th>
+            <th>Edge</th>
+            <th>Opera</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Full-power adblock (MV2)</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Local AI (no cloud required)</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Goal-based agent workflows</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Spaces / project workspaces</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Plan preview + action log</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Container identity isolation</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Anti-fingerprinting (engine-level)</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+          </tr>
+          <tr>
+            <td>Dual UX (mainstream + power)</td>
+            <td class="slate-col"><span class="check">✓</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="partial">~</span></td>
+            <td><span class="partial">~</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="fade-up" style="margin-top:24px;text-align:center;">
+    <span class="check" style="font-size:14px;">✓</span> <span style="font-size:13px;color:var(--text2);margin-right:20px;">Full support</span>
+    <span class="partial" style="font-size:14px;">~</span> <span style="font-size:13px;color:var(--text2);margin-right:20px;">Partial</span>
+    <span class="cross" style="font-size:14px;">✗</span> <span style="font-size:13px;color:var(--text2);">Not supported</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TECH STACK -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="tech" class="s-tech">
+  <div class="bg-accent" style="width:400px;height:400px;background:#5E5CE6;bottom:0;left:-100px;"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Technology</div>
+    <h2>Built on <span class="gradient-text">Proven Foundations</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Every technology choice is deliberate. Open-source, auditable, and production-grade.</p>
+  </div>
+  <div class="fade-up" style="text-align:center;max-width:900px;">
+    <div style="margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">Engine & Runtime</div>
+      <span class="tech-pill">🦊 Firefox/Gecko ESR</span>
+      <span class="tech-pill">🦀 Rust (Gecko internals)</span>
+      <span class="tech-pill">⚡ WebGPU</span>
+      <span class="tech-pill">🔧 WebAssembly</span>
+    </div>
+    <div style="margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">AI & Inference</div>
+      <span class="tech-pill">🧠 Qwen3.5-0.8B</span>
+      <span class="tech-pill">⚙️ llama.cpp / Ollama</span>
+      <span class="tech-pill">🤗 Transformers.js</span>
+      <span class="tech-pill">📦 WebLLM (MLC)</span>
+    </div>
+    <div style="margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">Privacy & Blocking</div>
+      <span class="tech-pill">🛡️ EasyList / EasyPrivacy</span>
+      <span class="tech-pill">🔍 CNAME Uncloaking</span>
+      <span class="tech-pill">🧱 Firefox ETP</span>
+      <span class="tech-pill">🔐 WebCrypto (E2E)</span>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">Storage & Sync</div>
+      <span class="tech-pill">🗄️ SQLite (local)</span>
+      <span class="tech-pill">🔢 Vector Embeddings</span>
+      <span class="tech-pill">🔒 Zero-Knowledge Sync</span>
+      <span class="tech-pill">📱 IndexedDB</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ROADMAP -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="roadmap" class="s-roadmap">
+  <div class="bg-accent" style="width:450px;height:450px;background:#FF9F0A;top:50%;right:-100px;transform:translateY(-50%);"></div>
+  <div class="section-header fade-up">
+    <div class="eyebrow">Roadmap</div>
+    <h2>Three Phases. <span class="gradient-text">One Vision.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:16px;">Desktop-first. Stability before features. Ship when it's right.</p>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:20px;width:100%;max-width:800px;" class="fade-up">
+    <div class="roadmap-item glass" style="border-color:var(--blue);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="padding:4px 12px;border-radius:100px;background:rgba(10,132,255,0.1);color:var(--blue);font-size:12px;font-weight:700;">MVP 0.1</div>
+        <div style="font-size:13px;color:var(--text3);">Augmented Browser</div>
+      </div>
+      <h3 style="font-size:18px;margin-bottom:10px;">Feels like Chrome. Acts smarter.</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(10,132,255,0.08);color:var(--blue);">Spaces & tab grouping</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(10,132,255,0.08);color:var(--blue);">Command palette</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(10,132,255,0.08);color:var(--blue);">Summarize / Explain / Translate</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(10,132,255,0.08);color:var(--blue);">Cross-tab Q&A</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(10,132,255,0.08);color:var(--blue);">macOS · Windows · Linux</span>
+      </div>
+    </div>
+    <div class="roadmap-item glass" style="border-color:var(--indigo);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="padding:4px 12px;border-radius:100px;background:rgba(94,92,230,0.1);color:var(--indigo);font-size:12px;font-weight:700;">MVP 0.2</div>
+        <div style="font-size:13px;color:var(--text3);">Context-Aware Agent</div>
+      </div>
+      <h3 style="font-size:18px;margin-bottom:10px;">Context-aware. Light agent.</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(94,92,230,0.08);color:var(--indigo);">Local vector store</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(94,92,230,0.08);color:var(--indigo);">Goal-based commands</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(94,92,230,0.08);color:var(--indigo);">Plan preview + action log</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(94,92,230,0.08);color:var(--indigo);">Agent-tool dev APIs (beta)</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(94,92,230,0.08);color:var(--indigo);">Native adblock engine</span>
+      </div>
+    </div>
+    <div class="roadmap-item glass" style="border-color:var(--purple);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+        <div style="padding:4px 12px;border-radius:100px;background:rgba(191,90,242,0.1);color:var(--purple);font-size:12px;font-weight:700;">v1.0</div>
+        <div style="font-size:13px;color:var(--text3);">Agentic Browser</div>
+      </div>
+      <h3 style="font-size:18px;margin-bottom:10px;">The full vision. Shipped.</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(191,90,242,0.08);color:var(--purple);">Rich goal-based workflows</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(191,90,242,0.08);color:var(--purple);">Agent marketplace</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(191,90,242,0.08);color:var(--purple);">Full capability system</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(191,90,242,0.08);color:var(--purple);">Mobile (thin client)</span>
+        <span style="font-size:13px;padding:4px 10px;border-radius:6px;background:rgba(191,90,242,0.08);color:var(--purple);">Research · Shopping · Travel agents</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CTA -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="cta" class="s-cta" style="text-align:center;">
+  <div class="bg-accent" style="width:600px;height:600px;background:#0A84FF;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="bg-accent" style="width:400px;height:400px;background:#BF5AF2;top:20%;right:-100px;"></div>
+  <div class="fade-up" style="max-width:700px;">
+    <img src="https://cdn.abacus.ai/images/888387c5-895c-444d-b5f5-7de131b1bff8.png" alt="Slate" style="width:80px;height:80px;border-radius:20px;margin-bottom:32px;box-shadow:0 20px 60px rgba(0,0,0,0.2);"/>
+    <div class="eyebrow">Join the Future</div>
+    <h2>The Browser That <span class="gradient-text">Works For You.</span></h2>
+    <div class="divider"></div>
+    <p class="subtitle" style="margin-top:20px;">Privacy-first. AI-native. Goal-driven. Built on Firefox. No compromises.</p>
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:40px;flex-wrap:wrap;">
+      <a href="#hero" class="cta-btn cta-primary">🚀 Request Early Access</a>
+      <a href="#compare" class="cta-btn cta-secondary">📊 See Full Comparison</a>
+    </div>
+    <div style="display:flex;gap:32px;justify-content:center;margin-top:60px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em;" class="gradient-text">100%</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;">Local AI</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em;" class="gradient-text">0</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;">Data Sold</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em;" class="gradient-text">3</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;">Platforms at Launch</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:36px;font-weight:800;letter-spacing:-0.03em;" class="gradient-text">∞</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px;">Possibilities</div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <div style="margin-top:80px;padding-top:40px;border-top:1px solid rgba(0,0,0,0.08);width:100%;max-width:900px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://cdn.abacus.ai/images/888387c5-895c-444d-b5f5-7de131b1bff8.png" alt="Slate" style="width:28px;height:28px;border-radius:7px;"/>
+      <span style="font-weight:700;font-size:16px;">Slate</span>
+      <span style="color:var(--text3);font-size:14px;">by Slate-Automations + Software</span>
+    </div>
+    <div style="font-size:13px;color:var(--text3);">macOS · Windows · Linux · Mobile (post v1.0)</div>
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// PARTICLE SYSTEM
+// ═══════════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], mouse = { x: -9999, y: -9999 };
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  const COLORS = ['#0A84FF', '#5E5CE6', '#BF5AF2', '#32D74B', '#FF9F0A'];
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.r = Math.random() * 2.5 + 0.5;
+      this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      this.alpha = Math.random() * 0.5 + 0.1;
+      this.life = 0;
+      this.maxLife = Math.random() * 400 + 200;
+    }
+    update() {
+      this.life++;
+      if (this.life > this.maxLife) { this.reset(); return; }
+
+      // Mouse repulsion
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        const force = (120 - dist) / 120 * 0.8;
+        this.vx += (dx / dist) * force;
+        this.vy += (dy / dist) * force;
+      }
+
+      // Damping
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Wrap
+      if (this.x < 0) this.x = W;
+      if (this.x > W) this.x = 0;
+      if (this.y < 0) this.y = H;
+      if (this.y > H) this.y = 0;
+    }
+    draw() {
+      const fade = Math.min(this.life / 30, 1) * Math.min((this.maxLife - this.life) / 30, 1);
+      ctx.save();
+      ctx.globalAlpha = this.alpha * fade;
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Init particles
+  for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+  // Draw connections
+  function drawConnections() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          ctx.save();
+          ctx.globalAlpha = (1 - dist / 100) * 0.08;
+          ctx.strokeStyle = particles[i].color;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    drawConnections();
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ═══════════════════════════════════════════════════════
+// SCROLL ANIMATIONS
+// ═══════════════════════════════════════════════════════
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ═══════════════════════════════════════════════════════
+// TOGGLE INTERACTION
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.toggle').forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('on');
+    toggle.classList.toggle('off');
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// CMD RESULT HOVER
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.cmd-result').forEach(result => {
+  result.addEventListener('mouseenter', () => {
+    document.querySelectorAll('.cmd-result').forEach(r => r.classList.remove('active'));
+    result.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
