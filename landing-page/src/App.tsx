@@ -9,7 +9,7 @@ const cards = [
     description:
       "A deep dive into our market opportunity, technology moat, business model, and roadmap. Built for partners ready to back the next paradigm shift in how people use the web.",
     cta: "View Pitch Deck A",
-    href: "slate-pitch-deck_v1.html",
+    href: `${import.meta.env.BASE_URL}slate-pitch-deck_v1.html`,
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <path
@@ -38,7 +38,7 @@ const cards = [
     description:
       "A focused look at our integration opportunities, co-marketing programs, and how strategic partners can grow alongside our AI-native browser platform.",
     cta: "View Pitch Deck B",
-    href: "slate-pitch-deck_v2.html",
+    href: `${import.meta.env.BASE_URL}slate-pitch-deck_v2.html`,
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
         <path
