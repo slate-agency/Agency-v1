@@ -17,6 +17,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 
 // --- Components ---
@@ -543,6 +544,7 @@ export default function App() {
         <Newsletter />
       </main>
       <Footer />
+      <Analytics />
     </div>
   );
 }
