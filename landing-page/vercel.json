@@ -1,9 +1,0 @@
-{
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/landing-page/assets/:file*",
-      "destination": "/assets/:file*"
-    }
-  ]
-}
